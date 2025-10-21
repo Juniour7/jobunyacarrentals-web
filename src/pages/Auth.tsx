@@ -7,33 +7,109 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Car } from "lucide-react";
 import { toast } from "sonner";
+import API from "@/services/api";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [signupData, setSignupData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Login form state
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+
+  // Signup form state
+  const [signupData, setSignupData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    licence: "",
+    password: "",
+    confirmPassword: "",
+    agree_terms: false, // must agree to terms
+  });
+
+  // ----------------------------
+  // LOGIN HANDLER
+  // ----------------------------
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simulate login
-    toast.success("Login successful!");
-    navigate("/customer/dashboard");
+
+    try {
+      const response = await API.post("user/login/", {
+        email: loginData.email,
+        password: loginData.password,
+      });
+
+      const userData = response.data;
+
+      // Save token and user info
+      localStorage.setItem("token", userData.token);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      toast.success("Login successful!");
+
+      // Redirect based on role
+      if (userData.roles === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/customer/dashboard");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.detail || "Invalid email or password. Please try again.");
+    }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  // ----------------------------
+  // SIGNUP HANDLER
+  // ----------------------------
+  const handleSignup = async (e) => {
     e.preventDefault();
+
     if (signupData.password !== signupData.confirmPassword) {
       toast.error("Passwords do not match!");
       return;
     }
-    // Simulate signup
-    toast.success("Account created successfully!");
-    navigate("/customer/dashboard");
+
+    if (!signupData.agree_terms) {
+      toast.error("You must agree to the terms and conditions.");
+      return;
+    }
+
+    try {
+      const response = await API.post("user/register/", {
+        full_name: signupData.name,
+        email: signupData.email,
+        phone_number: signupData.contact,
+        license_number: signupData.licence,
+        roles: "customer", // default signup role
+        agree_terms: signupData.agree_terms,
+        password: signupData.password,
+        password2: signupData.confirmPassword,
+      });
+
+      toast.success("Account created successfully!");
+      localStorage.setItem("user", JSON.stringify(response.data));
+
+      navigate("/customer/dashboard");
+    } catch (error) {
+      console.error("Signup error:", error.response?.data);
+      const errors = error.response?.data;
+      const message =
+        errors?.email?.[0] ||
+        errors?.phone_number?.[0] ||
+        errors?.license_number?.[0] ||
+        errors?.password?.[0] ||
+        "Registration failed. Please try again.";
+      toast.error(message);
+    }
   };
 
+  // ----------------------------
+  // UI / FORM JSX
+  // ----------------------------
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-b from-secondary to-background">
       <div className="w-full max-w-md">
+        {/* Logo */}
         <Link to="/" className="flex items-center justify-center space-x-2 mb-8">
           <div className="w-12 h-12 bg-foreground rounded-full flex items-center justify-center">
             <Car className="w-7 h-7 text-background" />
@@ -47,6 +123,7 @@ const Auth = () => {
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
 
+          {/* ---------------------- LOGIN ---------------------- */}
           <TabsContent value="login">
             <Card>
               <CardHeader>
@@ -62,7 +139,7 @@ const Auth = () => {
                       type="email"
                       placeholder="john@example.com"
                       value={loginData.email}
-                      onChange={(e) => setLoginData({...loginData, email: e.target.value})}
+                      onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                       required
                       className="mt-2"
                     />
@@ -73,7 +150,7 @@ const Auth = () => {
                       id="login-password"
                       type="password"
                       value={loginData.password}
-                      onChange={(e) => setLoginData({...loginData, password: e.target.value})}
+                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                       required
                       className="mt-2"
                     />
@@ -86,6 +163,7 @@ const Auth = () => {
             </Card>
           </TabsContent>
 
+          {/* ---------------------- SIGN UP ---------------------- */}
           <TabsContent value="signup">
             <Card>
               <CardHeader>
@@ -100,11 +178,12 @@ const Auth = () => {
                       id="signup-name"
                       placeholder="John Doe"
                       value={signupData.name}
-                      onChange={(e) => setSignupData({...signupData, name: e.target.value})}
+                      onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
                       required
                       className="mt-2"
                     />
                   </div>
+
                   <div>
                     <Label htmlFor="signup-email">Email</Label>
                     <Input
@@ -112,33 +191,76 @@ const Auth = () => {
                       type="email"
                       placeholder="john@example.com"
                       value={signupData.email}
-                      onChange={(e) => setSignupData({...signupData, email: e.target.value})}
+                      onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                       required
                       className="mt-2"
                     />
                   </div>
+
+                  <div>
+                    <Label htmlFor="signup-contact">Phone Number</Label>
+                    <Input
+                      id="signup-contact"
+                      type="text"
+                      placeholder="0712345678"
+                      value={signupData.contact}
+                      onChange={(e) => setSignupData({ ...signupData, contact: e.target.value })}
+                      required
+                      className="mt-2"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="signup-licence">Driver’s License Number</Label>
+                    <Input
+                      id="signup-licence"
+                      type="text"
+                      placeholder="DL123456"
+                      value={signupData.licence}
+                      onChange={(e) => setSignupData({ ...signupData, licence: e.target.value })}
+                      required
+                      className="mt-2"
+                    />
+                  </div>
+
                   <div>
                     <Label htmlFor="signup-password">Password</Label>
                     <Input
                       id="signup-password"
                       type="password"
                       value={signupData.password}
-                      onChange={(e) => setSignupData({...signupData, password: e.target.value})}
+                      onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                       required
                       className="mt-2"
                     />
                   </div>
+
                   <div>
                     <Label htmlFor="signup-confirm">Confirm Password</Label>
                     <Input
                       id="signup-confirm"
                       type="password"
                       value={signupData.confirmPassword}
-                      onChange={(e) => setSignupData({...signupData, confirmPassword: e.target.value})}
+                      onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
                       required
                       className="mt-2"
                     />
                   </div>
+
+                  {/* Terms agreement checkbox */}
+                  <div className="flex items-center space-x-2 mt-2">
+                    <input
+                      type="checkbox"
+                      id="agree_terms"
+                      checked={signupData.agree_terms}
+                      onChange={(e) => setSignupData({ ...signupData, agree_terms: e.target.checked })}
+                      required
+                    />
+                    <Label htmlFor="agree_terms" className="text-sm text-muted-foreground">
+                      I agree to the <Link to="/terms" className="text-accent underline">Terms and Conditions</Link>
+                    </Label>
+                  </div>
+
                   <Button type="submit" variant="accent" className="w-full" size="lg">
                     Create Account
                   </Button>
