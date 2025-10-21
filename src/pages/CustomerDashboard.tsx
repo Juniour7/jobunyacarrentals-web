@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger } from "@/components/ui/sidebar";
 import { Car, Calendar, FileWarning, LogOut, Home } from "lucide-react";
@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { bookingsAPI } from "@/services/api";
+import { Booking } from "@/types/vehicle";
 
 // Mock data
 const mockBookings = [
@@ -53,6 +55,23 @@ const mockReports: Array<{
 const CustomerDashboard = () => {
   const [activeView, setActiveView] = useState<'bookings' | 'reports'>('bookings');
   const [reportData, setReportData] = useState({ bookingId: "", description: "" });
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await bookingsAPI.getMyBookings();
+        setBookings(response.data);
+      } catch (error) {
+        toast.error("Failed to load bookings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
 
   const handleSubmitReport = (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,40 +146,53 @@ const CustomerDashboard = () => {
           <div className="p-6">
             {activeView === 'bookings' && (
               <div className="space-y-6">
-                <div className="grid gap-6">
-                  {mockBookings.map((booking) => (
-                    <Card key={booking.id}>
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start space-x-4">
-                            <img
-                              src={booking.vehicleImage}
-                              alt={booking.vehicleName}
-                              className="w-24 h-24 object-cover rounded-lg"
-                            />
-                            <div>
-                              <CardTitle className="font-heading text-xl">{booking.vehicleName}</CardTitle>
-                              <CardDescription className="mt-2">
-                                {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
-                              </CardDescription>
+                {loading ? (
+                  <div className="text-center py-12">Loading bookings...</div>
+                ) : bookings.length === 0 ? (
+                  <Card>
+                    <CardContent className="p-12 text-center">
+                      <p className="text-muted-foreground mb-4">No bookings yet</p>
+                      <Link to="/fleet">
+                        <Button variant="accent">Browse Vehicles</Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid gap-6">
+                    {bookings.map((booking) => (
+                      <Card key={booking.id}>
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start space-x-4">
+                              <img
+                                src={booking.vehicle_image}
+                                alt={booking.vehicle_name}
+                                className="w-24 h-24 object-cover rounded-lg"
+                              />
+                              <div>
+                                <CardTitle className="font-heading text-xl">{booking.vehicle_name}</CardTitle>
+                                <CardDescription className="mt-2">
+                                  {new Date(booking.start_date).toLocaleDateString()} - {new Date(booking.end_date).toLocaleDateString()}
+                                </CardDescription>
+                              </div>
                             </div>
+                            <Badge variant={booking.status === 'active' ? 'default' : 'secondary'}>
+                              {booking.status}
+                            </Badge>
                           </div>
-                          <Badge variant={booking.status === 'active' ? 'default' : 'secondary'}>
-                            {booking.status}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">Total Cost:</span>
-                          <span className="text-lg font-bold text-accent">
-                            KES {booking.totalPrice.toLocaleString()}
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Total Cost:</span>
+                            <span className="text-lg font-bold text-accent">
+                              KES {parseFloat(booking.total_price).toLocaleString()}
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -188,9 +220,9 @@ const CustomerDashboard = () => {
                           required
                         >
                           <option value="">Select a booking</option>
-                          {mockBookings.map((booking) => (
+                          {bookings.map((booking) => (
                             <option key={booking.id} value={booking.id}>
-                              {booking.vehicleName} - {new Date(booking.startDate).toLocaleDateString()}
+                              {booking.vehicle_name} - {new Date(booking.start_date).toLocaleDateString()}
                             </option>
                           ))}
                         </select>

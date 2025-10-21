@@ -22,14 +22,17 @@ export interface Vehicle {
 }
 
 export interface Booking {
-  id: string;
-  vehicleId: string;
-  vehicleName: string;
-  vehicleImage: string;
-  startDate: string;
-  endDate: string;
-  totalPrice: number;
-  status: 'active' | 'completed' | 'cancelled';
+  id: number;
+  user: number;
+  vehicle: number;
+  vehicle_name: string;
+  vehicle_image: string;
+  start_date: string;
+  end_date: string;
+  total_price: string;
+  status: 'pending' | 'active' | 'completed' | 'cancelled';
+  daily_rate: string;
+  created_at: string;
 }
 
 export interface DamageReport {

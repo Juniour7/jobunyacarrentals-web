@@ -1,12 +1,50 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VehicleCard from "@/components/VehicleCard";
-import { vehicles } from "@/data/vehicles";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { vehiclesAPI } from "@/services/api";
+import { toast } from "sonner";
+import { Vehicle } from "@/types/vehicle";
 
 const Fleet = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await vehiclesAPI.getAll();
+        const apiVehicles = response.data.map((v: any) => ({
+          id: v.id.toString(),
+          name: v.name,
+          category: v.car_type,
+          pricePerDay: parseFloat(v.daily_rate),
+          rating: 4.5,
+          image: v.image,
+          seats: v.seats,
+          transmission: v.transmission,
+          fuelType: v.fuel_type,
+          mileage: "Unlimited",
+          minimumHirePeriod: "1 day",
+          engine: v.model,
+          enginePower: "N/A",
+          engineTorque: "N/A",
+          fuelEconomy: { city: "N/A", highway: "N/A" },
+          available: v.status === "Available",
+          features: v.features ? v.features.split(',').map((f: string) => f.trim()) : []
+        }));
+        setVehicles(apiVehicles);
+      } catch (error) {
+        toast.error("Failed to load vehicles");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
   
   const categories = ["ALL", ...Array.from(new Set(vehicles.map(v => v.category)))];
   
@@ -45,11 +83,15 @@ const Fleet = () => {
           </div>
           
           {/* Vehicle Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredVehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-12">Loading vehicles...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredVehicles.map((vehicle) => (
+                <VehicleCard key={vehicle.id} vehicle={vehicle} />
+              ))}
+            </div>
+          )}
           
           {filteredVehicles.length === 0 && (
             <div className="text-center py-12">

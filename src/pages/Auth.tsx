@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Car } from "lucide-react";
 import { toast } from "sonner";
-import API from "@/services/api";
+import { authAPI } from "@/services/api";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const Auth = () => {
     e.preventDefault();
 
     try {
-      const response = await API.post("user/login/", {
+      const response = await authAPI.login({
         email: loginData.email,
         password: loginData.password,
       });
@@ -48,9 +48,9 @@ const Auth = () => {
 
       // Redirect based on role
       if (userData.roles === "admin") {
-        navigate("/admin/dashboard");
+        navigate("/admin");
       } else {
-        navigate("/customer/dashboard");
+        navigate("/customer-dashboard");
       }
     } catch (error) {
       console.error(error);
@@ -75,31 +75,38 @@ const Auth = () => {
     }
 
     try {
-      const response = await API.post("user/register/", {
+      const response = await authAPI.register({
         full_name: signupData.name,
         email: signupData.email,
         phone_number: signupData.contact,
         license_number: signupData.licence,
-        roles: "customer", // default signup role
-        agree_terms: signupData.agree_terms,
         password: signupData.password,
         password2: signupData.confirmPassword,
+        agree_terms: "True"
       });
 
-      toast.success("Account created successfully!");
-      localStorage.setItem("user", JSON.stringify(response.data));
-
-      navigate("/customer/dashboard");
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        toast.success("Registration successful!");
+        navigate("/customer-dashboard");
+      } else {
+        toast.success("Registration successful! Please login.");
+      }
     } catch (error) {
       console.error("Signup error:", error.response?.data);
       const errors = error.response?.data;
-      const message =
-        errors?.email?.[0] ||
-        errors?.phone_number?.[0] ||
-        errors?.license_number?.[0] ||
-        errors?.password?.[0] ||
-        "Registration failed. Please try again.";
-      toast.error(message);
+      if (errors) {
+        Object.keys(errors).forEach(key => {
+          if (Array.isArray(errors[key])) {
+            errors[key].forEach((msg: string) => toast.error(`${key}: ${msg}`));
+          } else {
+            toast.error(`${key}: ${errors[key]}`);
+          }
+        });
+      } else {
+        toast.error("Registration failed. Please try again.");
+      }
     }
   };
 

@@ -1,25 +1,87 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { vehicles } from "@/data/vehicles";
 import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { vehiclesAPI, bookingsAPI } from "@/services/api";
+import { Vehicle } from "@/types/vehicle";
 
 const VehicleDetail = () => {
   const { id } = useParams();
-  const vehicle = vehicles.find(v => v.id === id);
+  const navigate = useNavigate();
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [loading, setLoading] = useState(true);
   const [bookingData, setBookingData] = useState({
     startDate: "",
-    endDate: "",
-    name: "",
-    email: "",
-    phone: ""
+    endDate: ""
   });
+
+  useEffect(() => {
+    const fetchVehicle = async () => {
+      try {
+        const response = await vehiclesAPI.getById(id!);
+        const v = response.data;
+        setVehicle({
+          id: v.id.toString(),
+          name: v.name,
+          category: v.car_type,
+          pricePerDay: parseFloat(v.daily_rate),
+          rating: 4.5,
+          image: v.image,
+          seats: v.seats,
+          transmission: v.transmission,
+          fuelType: v.fuel_type,
+          mileage: "Unlimited",
+          minimumHirePeriod: "1 day",
+          engine: v.model,
+          enginePower: "N/A",
+          engineTorque: "N/A",
+          fuelEconomy: { city: "N/A", highway: "N/A" },
+          available: v.status === "Available",
+          features: v.features ? v.features.split(',').map((f: string) => f.trim()) : []
+        });
+      } catch (error) {
+        toast.error("Failed to load vehicle");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchVehicle();
+  }, [id]);
+
+  const handleBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to make a booking");
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      await bookingsAPI.create({
+        vehicle: parseInt(id!),
+        start_date: bookingData.startDate,
+        end_date: bookingData.endDate
+      });
+      toast.success("Booking request submitted successfully!");
+      setBookingData({ startDate: "", endDate: "" });
+      navigate("/customer-dashboard");
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to create booking");
+    }
+  };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   if (!vehicle) {
     return (
@@ -33,12 +95,6 @@ const VehicleDetail = () => {
       </div>
     );
   }
-
-  const handleBooking = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success("Booking request submitted! We'll contact you shortly.");
-    setBookingData({ startDate: "", endDate: "", name: "", email: "", phone: "" });
-  };
 
   return (
     <div className="min-h-screen">
@@ -145,6 +201,7 @@ const VehicleDetail = () => {
                           value={bookingData.startDate}
                           onChange={(e) => setBookingData({...bookingData, startDate: e.target.value})}
                           required
+                          min={new Date().toISOString().split('T')[0]}
                           className="mt-2"
                         />
                       </div>
@@ -156,44 +213,10 @@ const VehicleDetail = () => {
                           value={bookingData.endDate}
                           onChange={(e) => setBookingData({...bookingData, endDate: e.target.value})}
                           required
+                          min={bookingData.startDate || new Date().toISOString().split('T')[0]}
                           className="mt-2"
                         />
                       </div>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input
-                        id="name"
-                        value={bookingData.name}
-                        onChange={(e) => setBookingData({...bookingData, name: e.target.value})}
-                        required
-                        className="mt-2"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={bookingData.email}
-                        onChange={(e) => setBookingData({...bookingData, email: e.target.value})}
-                        required
-                        className="mt-2"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={bookingData.phone}
-                        onChange={(e) => setBookingData({...bookingData, phone: e.target.value})}
-                        required
-                        className="mt-2"
-                      />
                     </div>
                     
                     <Button type="submit" variant="accent" className="w-full" size="lg">
