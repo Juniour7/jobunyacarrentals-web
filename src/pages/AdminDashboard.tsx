@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger } from "@/components/ui/sidebar";
-import { Car, Users, BarChart3, LogOut, Home, Plus } from "lucide-react";
+import { Car, Users, BarChart3, LogOut, Home, Plus, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { vehicles } from "@/data/vehicles";
 
@@ -16,6 +17,29 @@ const mockUsers = [
   { id: "1", name: "John Doe", email: "john@example.com", bookings: 3, status: "active" },
   { id: "2", name: "Jane Smith", email: "jane@example.com", bookings: 1, status: "active" },
   { id: "3", name: "Bob Johnson", email: "bob@example.com", bookings: 5, status: "active" }
+];
+
+// Mock bookings data
+type BookingStatus = 'active' | 'completed' | 'cancelled';
+
+interface AdminBooking {
+  id: string;
+  userId: string;
+  userName: string;
+  vehicleName: string;
+  vehicleImage: string;
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+  status: BookingStatus;
+}
+
+const mockBookingsData: AdminBooking[] = [
+  { id: "1", userId: "1", userName: "John Doe", vehicleName: "Mercedes-Benz G-Class", vehicleImage: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=800&q=80", startDate: "2025-10-25", endDate: "2025-10-30", totalPrice: 225000, status: "active" },
+  { id: "2", userId: "2", userName: "Jane Smith", vehicleName: "BMW X7", vehicleImage: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80", startDate: "2025-10-22", endDate: "2025-10-24", totalPrice: 90000, status: "active" },
+  { id: "3", userId: "3", userName: "Bob Johnson", vehicleName: "Range Rover Sport", vehicleImage: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=800&q=80", startDate: "2025-10-15", endDate: "2025-10-20", totalPrice: 200000, status: "completed" },
+  { id: "4", userId: "1", userName: "John Doe", vehicleName: "Toyota Land Cruiser V8", vehicleImage: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80", startDate: "2025-10-10", endDate: "2025-10-12", totalPrice: 70000, status: "completed" },
+  { id: "5", userId: "3", userName: "Bob Johnson", vehicleName: "Porsche Cayenne", vehicleImage: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80", startDate: "2025-10-28", endDate: "2025-11-02", totalPrice: 225000, status: "active" },
 ];
 
 // Mock stats
@@ -29,18 +53,26 @@ const mockStats = {
 };
 
 const AdminDashboard = () => {
-  const [activeView, setActiveView] = useState<'overview' | 'vehicles' | 'users'>('overview');
+  const [activeView, setActiveView] = useState<'overview' | 'vehicles' | 'users' | 'bookings'>('overview');
   const [vehicleData, setVehicleData] = useState({
     name: "",
     category: "",
     pricePerDay: "",
     seats: ""
   });
+  const [bookings, setBookings] = useState(mockBookingsData);
 
   const handleAddVehicle = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success("Vehicle added successfully!");
     setVehicleData({ name: "", category: "", pricePerDay: "", seats: "" });
+  };
+
+  const handleUpdateBookingStatus = (bookingId: string, newStatus: BookingStatus) => {
+    setBookings(bookings.map(booking => 
+      booking.id === bookingId ? { ...booking, status: newStatus } : booking
+    ));
+    toast.success("Booking status updated successfully!");
   };
 
   return (
@@ -80,6 +112,12 @@ const AdminDashboard = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
+                    <SidebarMenuButton onClick={() => setActiveView('bookings')} isActive={activeView === 'bookings'}>
+                      <Calendar className="w-4 h-4" />
+                      <span>Bookings</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/">
                         <Home className="w-4 h-4" />
@@ -107,7 +145,7 @@ const AdminDashboard = () => {
               <div className="flex items-center space-x-4">
                 <SidebarTrigger />
                 <h1 className="font-heading text-2xl font-bold">
-                  {activeView === 'overview' ? 'Dashboard Overview' : activeView === 'vehicles' ? 'Vehicle Inventory' : 'User Management'}
+                  {activeView === 'overview' ? 'Dashboard Overview' : activeView === 'vehicles' ? 'Vehicle Inventory' : activeView === 'users' ? 'User Management' : 'Bookings Management'}
                 </h1>
               </div>
             </div>
@@ -291,6 +329,63 @@ const AdminDashboard = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-muted-foreground">Total Bookings:</span>
                           <span className="font-semibold">{user.bookings}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeView === 'bookings' && (
+              <div className="space-y-6">
+                <div className="grid gap-4">
+                  {bookings.map((booking) => (
+                    <Card key={booking.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start space-x-4">
+                            <img
+                              src={booking.vehicleImage}
+                              alt={booking.vehicleName}
+                              className="w-24 h-24 object-cover rounded-lg"
+                            />
+                            <div>
+                              <CardTitle className="font-heading text-xl">{booking.vehicleName}</CardTitle>
+                              <CardDescription className="mt-2">
+                                Customer: {booking.userName}
+                              </CardDescription>
+                              <CardDescription className="mt-1">
+                                {booking.startDate} to {booking.endDate}
+                              </CardDescription>
+                            </div>
+                          </div>
+                          <Badge variant={booking.status === 'active' ? 'default' : booking.status === 'completed' ? 'secondary' : 'destructive'}>
+                            {booking.status}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">Total:</span>
+                            <span className="text-lg font-bold text-accent">
+                              KES {booking.totalPrice.toLocaleString()}
+                            </span>
+                          </div>
+                          <Select
+                            value={booking.status}
+                            onValueChange={(value) => handleUpdateBookingStatus(booking.id, value as BookingStatus)}
+                          >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Update status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </CardContent>
                     </Card>
