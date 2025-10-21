@@ -32,7 +32,7 @@ const VehicleDetail = () => {
           category: v.car_type,
           pricePerDay: parseFloat(v.daily_rate),
           rating: 4.5,
-          image: v.image,
+          image: v.image.startsWith("http") ? v.image : `https://giftmacvane.pythonanywhere.com${v.image}`,
           seats: v.seats,
           transmission: v.transmission,
           fuelType: v.fuel_type,

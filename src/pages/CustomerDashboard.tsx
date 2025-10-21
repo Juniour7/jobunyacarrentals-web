@@ -12,27 +12,7 @@ import { toast } from "sonner";
 import { bookingsAPI } from "@/services/api";
 import { Booking } from "@/types/vehicle";
 
-// Mock data
-const mockBookings = [
-  {
-    id: "1",
-    vehicleName: "Mercedes-Benz G-Class",
-    vehicleImage: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?q=80&w=400",
-    startDate: "2025-10-10",
-    endDate: "2025-10-15",
-    totalPrice: 225000,
-    status: 'active' as const
-  },
-  {
-    id: "2",
-    vehicleName: "Range Rover Vogue",
-    vehicleImage: "https://images.unsplash.com/photo-1606611013016-969607c2c9ab?q=80&w=400",
-    startDate: "2025-09-20",
-    endDate: "2025-09-25",
-    totalPrice: 225000,
-    status: 'completed' as const
-  }
-];
+
 
 const mockReports: Array<{
   id: string;
@@ -57,6 +37,8 @@ const CustomerDashboard = () => {
   const [reportData, setReportData] = useState({ bookingId: "", description: "" });
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+
+
 
   useEffect(() => {
     const fetchBookings = async () => {

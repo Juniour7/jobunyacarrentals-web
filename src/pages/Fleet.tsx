@@ -16,7 +16,7 @@ const Fleet = () => {
     const fetchVehicles = async () => {
       try {
         const response = await vehiclesAPI.getAll();
-        const apiVehicles = response.data.map((v: any) => ({
+        const apiVehicles = response.data.results.map((v: any) => ({
           id: v.id.toString(),
           name: v.name,
           category: v.car_type,

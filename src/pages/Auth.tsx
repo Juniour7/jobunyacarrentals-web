@@ -48,9 +48,9 @@ const Auth = () => {
 
       // Redirect based on role
       if (userData.roles === "admin") {
-        navigate("/admin");
+        navigate("/admin/dashboard");
       } else {
-        navigate("/customer-dashboard");
+        navigate("/customer/dashboard");
       }
     } catch (error) {
       console.error(error);
@@ -89,7 +89,7 @@ const Auth = () => {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         toast.success("Registration successful!");
-        navigate("/customer-dashboard");
+        navigate("/customer/dashboard");
       } else {
         toast.success("Registration successful! Please login.");
       }
