@@ -42,6 +42,12 @@ export const vehiclesAPI = {
       'Content-Type': 'multipart/form-data',
     },
   }),
+  update: (id: number, data: FormData) => api.put(`/vehicles/${id}/`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  delete: (id: number) => api.delete(`/vehicles/${id}/`),
 };
 
 export const bookingsAPI = {

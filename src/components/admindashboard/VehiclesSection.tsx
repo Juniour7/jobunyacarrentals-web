@@ -8,12 +8,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const VehiclesSection = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
-  const [vehicleData, setVehicleData] = useState({ name: "", category: "", pricePerDay: "", seats: "" });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [deleteVehicleId, setDeleteVehicleId] = useState<number | null>(null);
+  const [vehicleData, setVehicleData] = useState({
+    name: "",
+    model: "",
+    car_type: "",
+    description: "",
+    seats: "",
+    transmission: "",
+    fuel_type: "",
+    daily_rate: "",
+    status: "Available",
+    features: "",
+  });
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const loadVehicles = async () => {
     try {
@@ -45,48 +63,200 @@ const VehiclesSection = () => {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", vehicleData.name);
+    formData.append("model", vehicleData.model);
+    formData.append("car_type", vehicleData.car_type);
+    formData.append("description", vehicleData.description);
+    formData.append("seats", vehicleData.seats);
+    formData.append("transmission", vehicleData.transmission);
+    formData.append("fuel_type", vehicleData.fuel_type);
+    formData.append("daily_rate", vehicleData.daily_rate);
+    formData.append("status", vehicleData.status);
+    formData.append("features", vehicleData.features);
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    try {
+      if (editingVehicle) {
+        await vehiclesAPI.update(parseInt(editingVehicle.id), formData);
+        toast.success("Vehicle updated successfully!");
+      } else {
+        await vehiclesAPI.create(formData);
+        toast.success("Vehicle added successfully!");
+      }
+      setIsDialogOpen(false);
+      resetForm();
+      loadVehicles();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to save vehicle");
+    }
+  };
+
+  const handleEdit = (vehicle: Vehicle) => {
+    setEditingVehicle(vehicle);
+    setVehicleData({
+      name: vehicle.name,
+      model: vehicle.engine || "",
+      car_type: vehicle.category,
+      description: "",
+      seats: vehicle.seats.toString(),
+      transmission: vehicle.transmission,
+      fuel_type: vehicle.fuelType,
+      daily_rate: vehicle.pricePerDay.toString(),
+      status: vehicle.available ? "Available" : "Unavailable",
+      features: vehicle.features?.join(", ") || "",
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!deleteVehicleId) return;
+    try {
+      await vehiclesAPI.delete(deleteVehicleId);
+      toast.success("Vehicle deleted successfully!");
+      setDeleteVehicleId(null);
+      loadVehicles();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to delete vehicle");
+    }
+  };
+
+  const resetForm = () => {
+    setVehicleData({
+      name: "",
+      model: "",
+      car_type: "",
+      description: "",
+      seats: "",
+      transmission: "",
+      fuel_type: "",
+      daily_rate: "",
+      status: "Available",
+      features: "",
+    });
+    setImageFile(null);
+    setEditingVehicle(null);
+  };
+
   useEffect(() => {
     loadVehicles();
   }, []);
 
   return (
     <div className="space-y-6">
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
         <DialogTrigger asChild>
           <Button variant="accent">
             <Plus className="w-4 h-4 mr-2" /> Add Vehicle
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add New Vehicle</DialogTitle>
+            <DialogTitle>{editingVehicle ? "Edit Vehicle" : "Add New Vehicle"}</DialogTitle>
           </DialogHeader>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              toast.success("Vehicle added successfully!");
-              setVehicleData({ name: "", category: "", pricePerDay: "", seats: "" });
-            }}
-            className="space-y-4"
-          >
-            <div>
-              <Label htmlFor="name">Vehicle Name</Label>
-              <Input id="name" value={vehicleData.name} onChange={(e) => setVehicleData({ ...vehicleData, name: e.target.value })} required />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name">Vehicle Name</Label>
+                <Input id="name" value={vehicleData.name} onChange={(e) => setVehicleData({ ...vehicleData, name: e.target.value })} required />
+              </div>
+              <div>
+                <Label htmlFor="model">Model</Label>
+                <Input id="model" value={vehicleData.model} onChange={(e) => setVehicleData({ ...vehicleData, model: e.target.value })} required />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="category">Category</Label>
-              <Input id="category" value={vehicleData.category} onChange={(e) => setVehicleData({ ...vehicleData, category: e.target.value })} required />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="car_type">Car Type</Label>
+                <Select value={vehicleData.car_type} onValueChange={(value) => setVehicleData({ ...vehicleData, car_type: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Sedan">Sedan</SelectItem>
+                    <SelectItem value="SUV">SUV</SelectItem>
+                    <SelectItem value="Sports">Sports</SelectItem>
+                    <SelectItem value="Luxury">Luxury</SelectItem>
+                    <SelectItem value="Van">Van</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="seats">Seats</Label>
+                <Input id="seats" type="number" value={vehicleData.seats} onChange={(e) => setVehicleData({ ...vehicleData, seats: e.target.value })} required />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="price">Price per Day (KES)</Label>
-              <Input id="price" type="number" value={vehicleData.pricePerDay} onChange={(e) => setVehicleData({ ...vehicleData, pricePerDay: e.target.value })} required />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="transmission">Transmission</Label>
+                <Select value={vehicleData.transmission} onValueChange={(value) => setVehicleData({ ...vehicleData, transmission: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select transmission" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Automatic">Automatic</SelectItem>
+                    <SelectItem value="Manual">Manual</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="fuel_type">Fuel Type</Label>
+                <Select value={vehicleData.fuel_type} onValueChange={(value) => setVehicleData({ ...vehicleData, fuel_type: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select fuel type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Petrol">Petrol</SelectItem>
+                    <SelectItem value="Diesel">Diesel</SelectItem>
+                    <SelectItem value="Electric">Electric</SelectItem>
+                    <SelectItem value="Hybrid">Hybrid</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div>
-              <Label htmlFor="seats">Seats</Label>
-              <Input id="seats" type="number" value={vehicleData.seats} onChange={(e) => setVehicleData({ ...vehicleData, seats: e.target.value })} required />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="daily_rate">Daily Rate (KES)</Label>
+                <Input id="daily_rate" type="number" value={vehicleData.daily_rate} onChange={(e) => setVehicleData({ ...vehicleData, daily_rate: e.target.value })} required />
+              </div>
+              <div>
+                <Label htmlFor="status">Status</Label>
+                <Select value={vehicleData.status} onValueChange={(value) => setVehicleData({ ...vehicleData, status: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Available">Available</SelectItem>
+                    <SelectItem value="Unavailable">Unavailable</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea id="description" value={vehicleData.description} onChange={(e) => setVehicleData({ ...vehicleData, description: e.target.value })} rows={3} />
+            </div>
+
+            <div>
+              <Label htmlFor="features">Features (comma-separated)</Label>
+              <Input id="features" value={vehicleData.features} onChange={(e) => setVehicleData({ ...vehicleData, features: e.target.value })} placeholder="Air conditioning, Bluetooth, Rear Camera" />
+            </div>
+
+            <div>
+              <Label htmlFor="image">Vehicle Image</Label>
+              <Input id="image" type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
+            </div>
+
             <Button type="submit" variant="accent" className="w-full">
-              Add Vehicle
+              {editingVehicle ? "Update Vehicle" : "Add Vehicle"}
             </Button>
           </form>
         </DialogContent>
@@ -116,14 +286,41 @@ const VehiclesSection = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Price per Day:</span>
-                  <span className="text-lg font-bold text-accent">KES {vehicle.pricePerDay.toLocaleString()}</span>
+                  <div>
+                    <span className="text-sm text-muted-foreground">Price per Day:</span>
+                    <span className="text-lg font-bold text-accent ml-2">KES {vehicle.pricePerDay.toLocaleString()}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(vehicle)}>
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={() => setDeleteVehicleId(parseInt(vehicle.id))}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+
+      <AlertDialog open={!!deleteVehicleId} onOpenChange={(open) => !open && setDeleteVehicleId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Vehicle</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this vehicle? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
