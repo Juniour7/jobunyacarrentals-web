@@ -31,6 +31,7 @@ const Fleet = () => {
         const apiVehicles = response.data.results.map((v: any) => ({
           id: v.id.toString(),
           name: v.name,
+          slug: v.slug,
           category: v.car_type,
           pricePerDay: parseFloat(v.daily_rate),
           rating: 4.5,

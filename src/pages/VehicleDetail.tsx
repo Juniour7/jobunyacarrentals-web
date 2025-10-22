@@ -2,50 +2,60 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap } from "lucide-react";
+import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap, X } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { vehiclesAPI, bookingsAPI } from "@/services/api";
 import { Vehicle } from "@/types/vehicle";
 
 const VehicleDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
-  const [bookingData, setBookingData] = useState({
-    startDate: "",
-    endDate: ""
-  });
+  const [bookingData, setBookingData] = useState({ startDate: "", endDate: "" });
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
     const fetchVehicle = async () => {
+      if (!slug) return;
       try {
-        const response = await vehiclesAPI.getById(id!);
+        const response = await vehiclesAPI.getBySlug(slug);
         const v = response.data;
+        const mainImage = v.image.startsWith("http")
+          ? v.image
+          : `https://giftmacvane.pythonanywhere.com${v.image}`;
+
         setVehicle({
           id: v.id.toString(),
           name: v.name,
+          slug: v.slug,
           category: v.car_type,
+          description: v.description,
           pricePerDay: parseFloat(v.daily_rate),
           rating: 4.5,
-          image: v.image.startsWith("http") ? v.image : `https://giftmacvane.pythonanywhere.com${v.image}`,
+          image: mainImage,
           seats: v.seats,
           transmission: v.transmission,
-          description: v.description,
           fuelType: v.fuel_type,
           mileage: "Unlimited",
-          minimumHirePeriod: "1 day",
-          engine: v.model,
+          mindDays: v.min_days ?? 1,
+          engine: v.engine,
           enginePower: "N/A",
-          engineTorque: "N/A",
+          engineTorque: v.engine_torque || "N/A",
           fuelEconomy: { city: "N/A", highway: "N/A" },
           available: v.status === "Available",
-          features: v.features ? v.features.split(',').map((f: string) => f.trim()) : []
+          features: v.features ? v.features.split(",").map((f: string) => f.trim()) : [],
+          images: v.images || [],
         });
+
+        setSelectedImage(mainImage);
       } catch (error) {
         toast.error("Failed to load vehicle");
       } finally {
@@ -53,12 +63,12 @@ const VehicleDetail = () => {
       }
     };
 
-    if (id) fetchVehicle();
-  }, [id]);
+    fetchVehicle();
+  }, [slug]);
 
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("Please login to make a booking");
@@ -66,11 +76,16 @@ const VehicleDetail = () => {
       return;
     }
 
+    if (!vehicle) {
+      toast.error("Vehicle data not loaded yet");
+      return;
+    }
+
     try {
       await bookingsAPI.create({
-        vehicle: parseInt(id!),
+        vehicle: parseInt(vehicle.id),
         start_date: bookingData.startDate,
-        end_date: bookingData.endDate
+        end_date: bookingData.endDate,
       });
       toast.success("Booking request submitted successfully!");
       setBookingData({ startDate: "", endDate: "" });
@@ -80,49 +95,116 @@ const VehicleDetail = () => {
     }
   };
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
 
-  if (!vehicle) {
+  if (!vehicle)
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-heading font-bold mb-4">Vehicle Not Found</h1>
+          <h1 className="text-4xl font-bold mb-4">Vehicle Not Found</h1>
           <Link to="/fleet">
             <Button variant="accent">Back to Fleet</Button>
           </Link>
         </div>
       </div>
     );
-  }
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      
+
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
-          <Link to="/fleet" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-8 transition-colors">
+          <Link
+            to="/fleet"
+            className="inline-flex items-center text-muted-foreground hover:text-foreground mb-8 transition-colors"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Fleet
           </Link>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Vehicle Image */}
-            <div>
-              <h1 className="font-heading text-4xl  font-bold mb-4">
-                {vehicle.name}
-              </h1>
-              <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-xl">
-                <img
-                  src={vehicle.image}
+            {/* Vehicle Image Gallery */}
+            <div className="space-y-3">
+              {/* Main Image */}
+              <h1 className="text-4xl font-heading">{vehicle.name}</h1>
+              <div
+                className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl mb-4 cursor-pointer group"
+                onClick={() => setLightboxOpen(true)}
+              >
+                <motion.img
+                  key={selectedImage}
+                  src={selectedImage || vehicle.image}
                   alt={vehicle.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
               </div>
+
+              {/* Thumbnails */}
+              {vehicle.images && vehicle.images.length > 0 && (
+                <div className="flex space-x-3 overflow-x-auto pb-2">
+                  {[vehicle.image, ...vehicle.images.map(img =>
+                    img.image.startsWith("http")
+                      ? img.image
+                      : `https://giftmacvane.pythonanywhere.com${img.image}`
+                  )].map((img, index) => (
+                    <motion.img
+                      key={index}
+                      src={img}
+                      alt={`Thumbnail ${index + 1}`}
+                      className={`w-20 h-16 object-cover rounded-lg cursor-pointer border-2 transition-all ${
+                        selectedImage === img ? "border-accent scale-105" : "border-transparent hover:opacity-80"
+                      }`}
+                      onClick={() => setSelectedImage(img)}
+                      whileHover={{ scale: 1.05 }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Lightbox Modal */}
+              <AnimatePresence>
+                {lightboxOpen && (
+                  <motion.div
+                    className="fixed inset-0 bg-black/90 flex items-center justify-center z-50"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {/* Close Button */}
+                    <button
+                      onClick={() => setLightboxOpen(false)}
+                      className="absolute top-6 right-6 text-white hover:text-accent transition"
+                    >
+                      <X className="w-8 h-8" />
+                    </button>
+
+                    {/* Enlarged Image */}
+                    <motion.img
+                      key={selectedImage}
+                      src={selectedImage || vehicle.image}
+                      alt="Zoomed vehicle"
+                      className="max-w-[90%] max-h-[85%] object-contain rounded-lg shadow-2xl"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.9, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-            
+
             {/* Vehicle Info */}
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -134,8 +216,67 @@ const VehicleDetail = () => {
                   <span className="font-medium">{vehicle.rating.toFixed(1)}</span>
                 </div>
               </div>
-              
-              <p>{vehicle.description}</p>
+
+              <h1 className="font-heading text-xl font-bold mb-4">
+                {vehicle.name} Overview
+              </h1>
+
+              <p className="text-sm text-[#6c7189] mb-3">{vehicle.description}</p>
+
+              <div className="mb-8">
+  <h2 className="font-heading text-xl font-semibold mb-4">{vehicle.name} Details</h2>
+  <div className="border border-muted rounded-lg overflow-hidden text-sm">
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Seats</span>
+      <span className="font-medium">{vehicle.seats} seater</span>
+    </div>
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Transmission</span>
+      <span className="font-medium">{vehicle.transmission}</span>
+    </div>
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Minimum Hire Period</span>
+      <span className="font-medium">{vehicle.mindDays} days</span>
+    </div>
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Mileage</span>
+      <span className="font-medium">{vehicle.mileage}</span>
+    </div>
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Fuel Type</span>
+      <span className="font-medium">{vehicle.fuelType}</span>
+    </div>
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Engine</span>
+      <span className="font-medium">{vehicle.engine}</span>
+    </div>
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Engine Power</span>
+      <span className="font-medium">{vehicle.enginePower}</span>
+    </div>
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Engine Torque</span>
+      <span className="font-medium">{vehicle.engineTorque}</span>
+    </div>
+    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+      <span className="text-muted-foreground">Fuel Economy</span>
+      <span className="font-medium">
+        City: {vehicle.fuelEconomy.city} | Highway: {vehicle.fuelEconomy.highway}
+      </span>
+    </div>
+    {vehicle.features.length > 0 && (
+      <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
+        <span className="text-muted-foreground">Features</span>
+        <ul className="list-disc list-inside text-sm text-muted-foreground">
+          {vehicle.features.map((feature, i) => (
+            <li key={i} className="text-foreground">{feature}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</div>
+
 
               <div className="flex items-baseline mb-8">
                 <span className="text-sm text-muted-foreground mr-2">From</span>
@@ -144,9 +285,9 @@ const VehicleDetail = () => {
                 </span>
                 <span className="text-muted-foreground ml-1">/day</span>
               </div>
-              
+
               {/* Quick Specs */}
-              <div className="grid grid-cols-2 gap-4 mb-8">
+              {/* <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
                   <Users className="w-5 h-5 text-accent" />
                   <div>
@@ -154,7 +295,7 @@ const VehicleDetail = () => {
                     <p className="font-semibold">{vehicle.seats} seater</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
                   <Settings className="w-5 h-5 text-accent" />
                   <div>
@@ -162,7 +303,7 @@ const VehicleDetail = () => {
                     <p className="font-semibold">{vehicle.transmission}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
                   <Fuel className="w-5 h-5 text-accent" />
                   <div>
@@ -170,7 +311,7 @@ const VehicleDetail = () => {
                     <p className="font-semibold">{vehicle.fuelType}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
                   <Gauge className="w-5 h-5 text-accent" />
                   <div>
@@ -178,17 +319,25 @@ const VehicleDetail = () => {
                     <p className="font-semibold">{vehicle.mileage}</p>
                   </div>
                 </div>
-              </div>
-              
+              </div> */}
+
+              {/* Booking Dialog */}
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="accent" size="lg" className="w-full mb-4" disabled={!vehicle.available}>
+                  <Button
+                    variant="accent"
+                    size="lg"
+                    className="w-full mb-4"
+                    disabled={!vehicle.available}
+                  >
                     {vehicle.available ? "Book Now" : "Currently Unavailable"}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
-                    <DialogTitle className="font-heading text-2xl">Book {vehicle.name}</DialogTitle>
+                    <DialogTitle className="font-heading text-2xl">
+                      Book {vehicle.name}
+                    </DialogTitle>
                     <DialogDescription>
                       Fill in your details and rental dates to proceed with booking.
                     </DialogDescription>
@@ -201,9 +350,11 @@ const VehicleDetail = () => {
                           id="startDate"
                           type="date"
                           value={bookingData.startDate}
-                          onChange={(e) => setBookingData({...bookingData, startDate: e.target.value})}
+                          onChange={(e) =>
+                            setBookingData({ ...bookingData, startDate: e.target.value })
+                          }
                           required
-                          min={new Date().toISOString().split('T')[0]}
+                          min={new Date().toISOString().split("T")[0]}
                           className="mt-2"
                         />
                       </div>
@@ -213,95 +364,21 @@ const VehicleDetail = () => {
                           id="endDate"
                           type="date"
                           value={bookingData.endDate}
-                          onChange={(e) => setBookingData({...bookingData, endDate: e.target.value})}
+                          onChange={(e) =>
+                            setBookingData({ ...bookingData, endDate: e.target.value })
+                          }
                           required
-                          min={bookingData.startDate || new Date().toISOString().split('T')[0]}
+                          min={bookingData.startDate || new Date().toISOString().split("T")[0]}
                           className="mt-2"
                         />
                       </div>
                     </div>
-                    
                     <Button type="submit" variant="accent" className="w-full" size="lg">
                       Submit Booking Request
                     </Button>
                   </form>
                 </DialogContent>
               </Dialog>
-            </div>
-          </div>
-          
-          {/* Detailed Specifications */}
-          <div className="mt-16">
-            <h2 className="font-heading text-3xl font-bold mb-8">Specifications</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 bg-secondary rounded-lg">
-                <h3 className="font-semibold mb-4 flex items-center">
-                  <Zap className="w-5 h-5 mr-2 text-accent" />
-                  Engine & Performance
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Engine</span>
-                    <span className="font-medium">{vehicle.engine}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Power</span>
-                    <span className="font-medium">{vehicle.enginePower}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Torque</span>
-                    <span className="font-medium">{vehicle.engineTorque}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-6 bg-secondary rounded-lg">
-                <h3 className="font-semibold mb-4 flex items-center">
-                  <Fuel className="w-5 h-5 mr-2 text-accent" />
-                  Fuel Economy
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">City</span>
-                    <span className="font-medium">{vehicle.fuelEconomy.city}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Highway</span>
-                    <span className="font-medium">{vehicle.fuelEconomy.highway}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-6 bg-secondary rounded-lg">
-                <h3 className="font-semibold mb-4 flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-accent" />
-                  Rental Terms
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Minimum Period</span>
-                    <span className="font-medium">{vehicle.minimumHirePeriod}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Mileage</span>
-                    <span className="font-medium">{vehicle.mileage}</span>
-                  </div>
-                </div>
-              </div>
-              
-              {vehicle.features && vehicle.features.length > 0 && (
-                <div className="p-6 bg-secondary rounded-lg">
-                  <h3 className="font-semibold mb-4">Key Features</h3>
-                  <ul className="space-y-2 text-sm">
-                    {vehicle.features.map((feature, index) => (
-                      <li key={index} className="flex items-center">
-                        <span className="w-1.5 h-1.5 bg-accent rounded-full mr-2"></span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           </div>
         </div>

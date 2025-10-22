@@ -1,16 +1,18 @@
 export interface Vehicle {
   id: string;
+  slug: string;
   name: string;
   category: string;
   pricePerDay: number;
   rating: number;
   image: string;
+  images?: { id: number; image: string }[]; 
   seats: number;
   description: string;
   transmission: string;
   fuelType: string;
   mileage: string;
-  minimumHirePeriod: string;
+  min_days: number | null;
   engine: string;
   enginePower: string;
   engineTorque: string;

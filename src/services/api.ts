@@ -34,21 +34,30 @@ export const authAPI = {
 };
 
 export const vehiclesAPI = {
-  getAll: (params?: { search?: string; car_type?: string; transmission?: string; fuel_type?: string }) => 
+  getAll: (params?: { search?: string; car_type?: string; transmission?: string; fuel_type?: string }) =>
     api.get('/vehicles/', { params }),
-  getById: (id: string) => api.get(`/vehicles/${id}/`),
+
+  // Fetch by slug instead of numeric ID
+  getBySlug: (slug: string) => api.get(`/vehicles/${slug}/`),
+
+  // Create remains the same
   create: (data: FormData) => api.post('/vehicles/', data, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   }),
-  update: (id: number, data: FormData) => api.put(`/vehicles/${id}/`, data, {
+
+  // Update by slug
+  update: (slug: string, data: FormData) => api.put(`/vehicles/${slug}/`, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   }),
-  delete: (id: number) => api.delete(`/vehicles/${id}/`),
+
+  // Delete by slug
+  delete: (slug: string) => api.delete(`/vehicles/${slug}/`),
 };
+
 
 export const bookingsAPI = {
   create: (data: { vehicle: number; start_date: string; end_date: string }) =>

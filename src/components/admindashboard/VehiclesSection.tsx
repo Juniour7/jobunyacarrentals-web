@@ -18,7 +18,7 @@ const VehiclesSection = () => {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
-  const [deleteVehicleId, setDeleteVehicleId] = useState<number | null>(null);
+  const [deleteVehicleSlug, setDeleteVehicleSlug] = useState<string | null>(null);
   const [vehicleData, setVehicleData] = useState({
     name: "",
     model: "",
@@ -82,7 +82,7 @@ const VehiclesSection = () => {
 
     try {
       if (editingVehicle) {
-        await vehiclesAPI.update(parseInt(editingVehicle.id), formData);
+        await vehiclesAPI.update(editingVehicle.slug, formData);
         toast.success("Vehicle updated successfully!");
       } else {
         await vehiclesAPI.create(formData);
@@ -114,11 +114,11 @@ const VehiclesSection = () => {
   };
 
   const handleDelete = async () => {
-    if (!deleteVehicleId) return;
+    if (!deleteVehicleSlug) return;
     try {
-      await vehiclesAPI.delete(deleteVehicleId);
+      await vehiclesAPI.delete(deleteVehicleSlug);
       toast.success("Vehicle deleted successfully!");
-      setDeleteVehicleId(null);
+      setDeleteVehicleSlug(null);
       loadVehicles();
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to delete vehicle");
@@ -294,7 +294,7 @@ const VehiclesSection = () => {
                     <Button variant="outline" size="sm" onClick={() => handleEdit(vehicle)}>
                       <Pencil className="w-4 h-4" />
                     </Button>
-                    <Button variant="destructive" size="sm" onClick={() => setDeleteVehicleId(parseInt(vehicle.id))}>
+                    <Button variant="destructive" size="sm" onClick={() => setDeleteVehicleSlug(vehicle.slug)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -305,7 +305,7 @@ const VehiclesSection = () => {
         </div>
       )}
 
-      <AlertDialog open={!!deleteVehicleId} onOpenChange={(open) => !open && setDeleteVehicleId(null)}>
+      <AlertDialog open={!!deleteVehicleSlug} onOpenChange={(open) => !open && setDeleteVehicleSlug(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Vehicle</AlertDialogTitle>

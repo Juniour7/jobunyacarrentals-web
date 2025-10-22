@@ -37,7 +37,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         </div>
         
         <h3 className="font-heading text-2xl font-semibold mb-3 group-hover:text-accent transition-colors">
-          {vehicle.name}
+          {vehicle.name} 
         </h3>
         
         <div className="flex items-baseline mb-4">
@@ -48,7 +48,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           <span className="text-sm text-muted-foreground">/day</span>
         </div>
         
-        <Link to={`/vehicle/${vehicle.id}`}>
+        <Link to={`/vehicle/${vehicle.slug}`}>
           <Button variant="accent" className="w-full group" disabled={!vehicle.available}>
             Explore
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
