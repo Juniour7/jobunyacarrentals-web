@@ -34,7 +34,8 @@ export const authAPI = {
 };
 
 export const vehiclesAPI = {
-  getAll: () => api.get('/vehicles/'),
+  getAll: (params?: { search?: string; car_type?: string; transmission?: string; fuel_type?: string }) => 
+    api.get('/vehicles/', { params }),
   getById: (id: string) => api.get(`/vehicles/${id}/`),
   create: (data: FormData) => api.post('/vehicles/', data, {
     headers: {
@@ -47,6 +48,16 @@ export const bookingsAPI = {
   create: (data: { vehicle: number; start_date: string; end_date: string }) =>
     api.post('/bookings/', data),
   getMyBookings: () => api.get('/my-bookings/'),
+  getAllBookings: () => api.get('/all-bookings/'),
+  updateStatus: (id: number, status: string) => 
+    api.patch(`/bookings/${id}/status/`, { status }),
+};
+
+export const userAPI = {
+  getProfile: () => api.get('/user/me/'),
+  changePassword: (data: { old_password: string; new_password: string; new_password2: string }) =>
+    api.post('/user/change-password/', data),
+  getCustomerList: () => api.get('/user/customer-list/'),
 };
 
 export default api;

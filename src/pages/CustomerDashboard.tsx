@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger } from "@/components/ui/sidebar";
-import { Car, Calendar, FileWarning, LogOut, Home } from "lucide-react";
+import { Car, Calendar, FileWarning, LogOut, Home, User, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { bookingsAPI } from "@/services/api";
+import { bookingsAPI, userAPI } from "@/services/api";
 import { Booking } from "@/types/vehicle";
 
 
@@ -33,32 +34,57 @@ const mockReports: Array<{
 ];
 
 const CustomerDashboard = () => {
-  const [activeView, setActiveView] = useState<'bookings' | 'reports'>('bookings');
+  const [activeView, setActiveView] = useState<'bookings' | 'reports' | 'profile'>('bookings');
   const [reportData, setReportData] = useState({ bookingId: "", description: "" });
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
+  const [passwordData, setPasswordData] = useState({
+    old_password: "",
+    new_password: "",
+    new_password2: ""
+  });
 
 
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchData = async () => {
       try {
-        const response = await bookingsAPI.getMyBookings();
-        setBookings(response.data);
+        const [bookingsRes, profileRes] = await Promise.all([
+          bookingsAPI.getMyBookings(),
+          userAPI.getProfile()
+        ]);
+        setBookings(bookingsRes.data);
+        setProfile(profileRes.data);
       } catch (error) {
-        toast.error("Failed to load bookings");
+        toast.error("Failed to load data");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBookings();
+    fetchData();
   }, []);
 
   const handleSubmitReport = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success("Damage report submitted successfully!");
     setReportData({ bookingId: "", description: "" });
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordData.new_password !== passwordData.new_password2) {
+      toast.error("New passwords do not match");
+      return;
+    }
+    try {
+      await userAPI.changePassword(passwordData);
+      toast.success("Password changed successfully!");
+      setPasswordData({ old_password: "", new_password: "", new_password2: "" });
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to change password");
+    }
   };
 
   return (
@@ -92,6 +118,12 @@ const CustomerDashboard = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
+                    <SidebarMenuButton onClick={() => setActiveView('profile')} isActive={activeView === 'profile'}>
+                      <User className="w-4 h-4" />
+                      <span>My Profile</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/">
                         <Home className="w-4 h-4" />
@@ -119,7 +151,7 @@ const CustomerDashboard = () => {
               <div className="flex items-center space-x-4">
                 <SidebarTrigger />
                 <h1 className="font-heading text-2xl font-bold">
-                  {activeView === 'bookings' ? 'My Bookings' : 'Damage Reports'}
+                  {activeView === 'bookings' ? 'My Bookings' : activeView === 'reports' ? 'Damage Reports' : 'My Profile'}
                 </h1>
               </div>
             </div>
@@ -255,6 +287,85 @@ const CustomerDashboard = () => {
                     </Card>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {activeView === 'profile' && profile && (
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-heading text-2xl">Profile Information</CardTitle>
+                    <CardDescription>Your account details</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Full Name</p>
+                        <p className="font-medium">{profile.full_name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Email</p>
+                        <p className="font-medium">{profile.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Phone</p>
+                        <p className="font-medium">{profile.phone_number}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">License Number</p>
+                        <p className="font-medium">{profile.license_number}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-heading text-2xl">Change Password</CardTitle>
+                    <CardDescription>Update your account password</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleChangePassword} className="space-y-4">
+                      <div>
+                        <Label htmlFor="old_password">Current Password</Label>
+                        <Input
+                          id="old_password"
+                          type="password"
+                          value={passwordData.old_password}
+                          onChange={(e) => setPasswordData({...passwordData, old_password: e.target.value})}
+                          required
+                          className="mt-2"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="new_password">New Password</Label>
+                        <Input
+                          id="new_password"
+                          type="password"
+                          value={passwordData.new_password}
+                          onChange={(e) => setPasswordData({...passwordData, new_password: e.target.value})}
+                          required
+                          className="mt-2"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="new_password2">Confirm New Password</Label>
+                        <Input
+                          id="new_password2"
+                          type="password"
+                          value={passwordData.new_password2}
+                          onChange={(e) => setPasswordData({...passwordData, new_password2: e.target.value})}
+                          required
+                          className="mt-2"
+                        />
+                      </div>
+                      <Button type="submit" variant="accent" className="w-full">
+                        <Lock className="w-4 h-4 mr-2" />
+                        Change Password
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
               </div>
             )}
           </div>

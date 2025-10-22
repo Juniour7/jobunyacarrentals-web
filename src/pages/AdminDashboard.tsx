@@ -31,6 +31,8 @@ const AdminDashboard = () => {
           <div className="p-6">
             {activeView === "overview" && <OverviewSection />}
             {activeView === "vehicles" && <VehiclesSection />}
+            {activeView === "users" && <UserSection />}
+            {activeView === "bookings" && <BookingSection />}
           </div>
         </main>
       </div>

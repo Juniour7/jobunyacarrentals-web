@@ -3,6 +3,9 @@ import Footer from "@/components/Footer";
 import VehicleCard from "@/components/VehicleCard";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search } from "lucide-react";
 import { vehiclesAPI } from "@/services/api";
 import { toast } from "sonner";
 import { Vehicle } from "@/types/vehicle";
@@ -11,11 +14,20 @@ const Fleet = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [transmissionFilter, setTransmissionFilter] = useState("ALL");
+  const [fuelTypeFilter, setFuelTypeFilter] = useState("ALL");
 
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await vehiclesAPI.getAll();
+        const params: any = {};
+        if (searchTerm) params.search = searchTerm;
+        if (selectedCategory !== "ALL") params.car_type = selectedCategory;
+        if (transmissionFilter !== "ALL") params.transmission = transmissionFilter;
+        if (fuelTypeFilter !== "ALL") params.fuel_type = fuelTypeFilter;
+        
+        const response = await vehiclesAPI.getAll(params);
         const apiVehicles = response.data.results.map((v: any) => ({
           id: v.id.toString(),
           name: v.name,
@@ -44,13 +56,11 @@ const Fleet = () => {
     };
 
     fetchVehicles();
-  }, []);
+  }, [searchTerm, selectedCategory, transmissionFilter, fuelTypeFilter]);
   
-  const categories = ["ALL", ...Array.from(new Set(vehicles.map(v => v.category)))];
-  
-  const filteredVehicles = selectedCategory === "ALL" 
-    ? vehicles 
-    : vehicles.filter(v => v.category === selectedCategory);
+  const categories = ["ALL", "Sedan", "SUV", "Luxury", "Sports"];
+  const transmissions = ["ALL", "Automatic", "Manual"];
+  const fuelTypes = ["ALL", "Petrol", "Diesel", "Electric", "Hybrid"];
 
   return (
     <div className="min-h-screen">
@@ -68,18 +78,53 @@ const Fleet = () => {
             </p>
           </div>
           
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "ghost"}
-                onClick={() => setSelectedCategory(category)}
-                size="sm"
-              >
-                {category}
-              </Button>
-            ))}
+          {/* Search and Filter */}
+          <div className="space-y-4 mb-12">
+            <div className="relative max-w-md mx-auto">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Search vehicles..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-3">
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={transmissionFilter} onValueChange={setTransmissionFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Transmission" />
+                </SelectTrigger>
+                <SelectContent>
+                  {transmissions.map((trans) => (
+                    <SelectItem key={trans} value={trans}>{trans}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={fuelTypeFilter} onValueChange={setFuelTypeFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Fuel Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {fuelTypes.map((fuel) => (
+                    <SelectItem key={fuel} value={fuel}>{fuel}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           
           {/* Vehicle Grid */}
@@ -87,15 +132,15 @@ const Fleet = () => {
             <div className="text-center py-12">Loading vehicles...</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredVehicles.map((vehicle) => (
+              {vehicles.map((vehicle) => (
                 <VehicleCard key={vehicle.id} vehicle={vehicle} />
               ))}
             </div>
           )}
           
-          {filteredVehicles.length === 0 && (
+          {!loading && vehicles.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">No vehicles found in this category.</p>
+              <p className="text-muted-foreground">No vehicles found matching your criteria.</p>
             </div>
           )}
         </div>
