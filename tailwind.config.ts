@@ -59,8 +59,8 @@ export default {
         },
       },
       fontFamily: {
-        heading: 'var(--heading-font)',
-        body: 'var(--body-font)',
+        heading: ['Lato'],
+        body: ['Inter'],
       },
       boxShadow: {
         sm: 'var(--shadow-sm)',

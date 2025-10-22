@@ -35,6 +35,7 @@ const VehicleDetail = () => {
           image: v.image.startsWith("http") ? v.image : `https://giftmacvane.pythonanywhere.com${v.image}`,
           seats: v.seats,
           transmission: v.transmission,
+          description: v.description,
           fuelType: v.fuel_type,
           mileage: "Unlimited",
           minimumHirePeriod: "1 day",
@@ -110,6 +111,9 @@ const VehicleDetail = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Vehicle Image */}
             <div>
+              <h1 className="font-heading text-4xl  font-bold mb-4">
+                {vehicle.name}
+              </h1>
               <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-xl">
                 <img
                   src={vehicle.image}
@@ -131,10 +135,8 @@ const VehicleDetail = () => {
                 </div>
               </div>
               
-              <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
-                {vehicle.name}
-              </h1>
-              
+              <p>{vehicle.description}</p>
+
               <div className="flex items-baseline mb-8">
                 <span className="text-sm text-muted-foreground mr-2">From</span>
                 <span className="text-accent font-bold text-3xl">

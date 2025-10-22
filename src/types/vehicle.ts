@@ -6,6 +6,7 @@ export interface Vehicle {
   rating: number;
   image: string;
   seats: number;
+  description: string;
   transmission: string;
   fuelType: string;
   mileage: string;
