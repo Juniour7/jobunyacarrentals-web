@@ -30,6 +30,9 @@ const VehiclesSection = () => {
     daily_rate: "",
     status: "Available",
     features: "",
+    min_days: "1",
+    engine: "",
+    engine_torque: "",
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [additionalImages, setAdditionalImages] = useState<FileList | null>(null);
@@ -65,59 +68,60 @@ const VehiclesSection = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", vehicleData.name);
-    formData.append("model", vehicleData.model);
-    formData.append("car_type", vehicleData.car_type);
-    formData.append("description", vehicleData.description);
-    formData.append("seats", vehicleData.seats);
-    formData.append("transmission", vehicleData.transmission);
-    formData.append("fuel_type", vehicleData.fuel_type);
-    formData.append("daily_rate", vehicleData.daily_rate);
-    formData.append("status", vehicleData.status);
-    formData.append("features", vehicleData.features);
-    if (imageFile) {
-      formData.append("image", imageFile);
-    }
-    if (additionalImages) {
-      Array.from(additionalImages).forEach((img) => {
-        formData.append("images", img);
-      });
-    }
+  e.preventDefault();
+  const formData = new FormData();
+  
+  Object.entries(vehicleData).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
 
-    try {
-      if (editingVehicle) {
-        await vehiclesAPI.update(editingVehicle.slug, formData);
-        toast.success("Vehicle updated successfully!");
-      } else {
-        await vehiclesAPI.create(formData);
-        toast.success("Vehicle added successfully!");
-      }
-      setIsDialogOpen(false);
-      resetForm();
-      loadVehicles();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to save vehicle");
+  // Append images
+  if (imageFile) {
+    formData.append("image", imageFile);
+  }
+  if (additionalImages) {
+    Array.from(additionalImages).forEach((img) => {
+      formData.append("images", img);
+    });
+  }
+
+  try {
+    if (editingVehicle) {
+      await vehiclesAPI.update(editingVehicle.slug, formData);
+      toast.success("Vehicle updated successfully!");
+    } else {
+      await vehiclesAPI.create(formData);
+      toast.success("Vehicle added successfully!");
     }
-  };
+    setIsDialogOpen(false);
+    resetForm();
+    loadVehicles();
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Failed to save vehicle");
+  }
+};
+
 
   const handleEdit = (vehicle: Vehicle) => {
-    setEditingVehicle(vehicle);
-    setVehicleData({
-      name: vehicle.name,
-      model: vehicle.engine || "",
-      car_type: vehicle.category,
-      description: "",
-      seats: vehicle.seats.toString(),
-      transmission: vehicle.transmission,
-      fuel_type: vehicle.fuelType,
-      daily_rate: vehicle.pricePerDay.toString(),
-      status: vehicle.available ? "Available" : "Unavailable",
-      features: vehicle.features?.join(", ") || "",
-    });
-    setIsDialogOpen(true);
-  };
+  setEditingVehicle(vehicle);
+  setVehicleData({
+    name: vehicle.name || "",
+    model: vehicle.engine || "",
+    car_type: vehicle.category || "",
+    description: vehicle.description || "",
+    seats: vehicle.seats?.toString() || "1",
+    transmission: vehicle.transmission || "",
+    fuel_type: vehicle.fuelType || "",
+    daily_rate: vehicle.pricePerDay?.toString() || "0",
+    status: vehicle.available ? "Available" : "Unavailable",
+    features: vehicle.features?.join(", ") || "",
+    min_days: vehicle.min_days?.toString() || "1",
+    engine: vehicle.engine || "",
+    engine_torque: vehicle.engine_torque || "",
+  });
+  setIsDialogOpen(true);
+};
+
 
   const handleDelete = async () => {
     if (!deleteVehicleSlug) return;
@@ -221,12 +225,43 @@ const VehiclesSection = () => {
                   <SelectContent>
                     <SelectItem value="Petrol">Petrol</SelectItem>
                     <SelectItem value="Diesel">Diesel</SelectItem>
-                    <SelectItem value="Electric">Electric</SelectItem>
-                    <SelectItem value="Hybrid">Hybrid</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+  <div>
+    <Label htmlFor="min_days">Minimum Hire Days</Label>
+    <Input
+      id="min_days"
+      type="number"
+      value={vehicleData.min_days}
+      onChange={(e) => setVehicleData({ ...vehicleData, min_days: e.target.value })}
+      required
+    />
+  </div>
+</div>
+
+<div className="grid grid-cols-2 gap-4">
+  <div>
+    <Label htmlFor="engine">Engine</Label>
+    <Input
+      id="engine"
+      value={vehicleData.engine}
+      onChange={(e) => setVehicleData({ ...vehicleData, engine: e.target.value })}
+    />
+  </div>
+  <div>
+    <Label htmlFor="engine_torque">Engine Torque</Label>
+    <Input
+      id="engine_torque"
+      value={vehicleData.engine_torque}
+      onChange={(e) => setVehicleData({ ...vehicleData, engine_torque: e.target.value })}
+    />
+  </div>
+</div>
+
 
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -241,7 +276,7 @@ const VehiclesSection = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Available">Available</SelectItem>
-                    <SelectItem value="Unavailable">Unavailable</SelectItem>
+                    <SelectItem value="Booked">Booked</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -290,7 +325,7 @@ const VehiclesSection = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-4">
-                    <img src={vehicle.image} alt={vehicle.name} className="w-24 h-24 object-cover rounded-lg" />
+                    <img src={vehicle.image} alt={vehicle.name} className="w-24 h-24 object-contain rounded-lg" />
                     <div>
                       <CardTitle>{vehicle.name}</CardTitle>
                       <CardDescription>

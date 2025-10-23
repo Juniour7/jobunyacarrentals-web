@@ -1,12 +1,40 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Car } from "lucide-react";
+import { useEffect, useState } from "react";
+
+interface User {
+  roles: "admin" | "customer";
+  [key: string]: any;
+}
 
 const Navbar = () => {
   const location = useLocation();
-  
+  const [user, setUser] = useState<User | null>(null);
+
+  // Load user from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, []);
+
   const isActive = (path: string) => location.pathname === path;
-  
+
+  // Determine dashboard link and label
+  const dashboardLink = user
+    ? user.roles === "admin"
+      ? "/admin/dashboard"
+      : "/customer/dashboard"
+    : "/auth";
+
+  const dashboardLabel = user ? "Dashboard" : "Login";
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,8 +74,8 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Link to="/auth">
-              <Button variant="ghost" size="sm">Login</Button>
+            <Link to={dashboardLink}>
+              <Button variant="ghost" size="sm">{dashboardLabel}</Button>
             </Link>
           </div>
         </div>

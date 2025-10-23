@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from "sonner";
 
 const API_BASE_URL = 'https://giftmacvane.pythonanywhere.com/api';
 
@@ -9,14 +10,47 @@ const api = axios.create({
   },
 });
 
-// Add token to requests if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Token ${token}`;
-  }
-  return config;
-});
+
+
+// Request Interceptor: Add Authorization token to headers
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Token ${token}`; // <-- Use 'Token', not 'Bearer'
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const status = error.response?.status;
+        const detail = error.response?.data?.detail;
+        const token = localStorage.getItem("token");
+
+        if (status === 401) {
+            if (token && detail === "Invalid token.") {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                toast.error("Session expired. Please login again.");
+                window.location.href = "/auth";
+            } else if (!token && detail === "Authentication credentials were not provided.") {
+                toast.error("Authentication required. Please login.");
+                window.location.href = "/auth";
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
+
+
+
+
+
 
 export const authAPI = {
   register: (data: {
@@ -31,6 +65,8 @@ export const authAPI = {
   
   login: (data: { email: string; password: string }) => 
     api.post('/user/login/', data),
+
+  logout: () => api.post('/user/logout/'),
 };
 
 export const vehiclesAPI = {

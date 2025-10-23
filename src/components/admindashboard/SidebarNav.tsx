@@ -10,11 +10,26 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { Car, Users, BarChart3, LogOut, Home, Calendar, FileWarning } from "lucide-react";
+import {authAPI} from '@/services/api'
+import { toast } from "sonner";
 
 interface Props {
   activeView: string;
   onChange: (view: "overview" | "vehicles" | "users" | "bookings" | "reports") => void;
 }
+
+const handleLogout = async () => {
+  try {
+    await authAPI.logout();
+    localStorage.removeItem('token'); // your token key
+    localStorage.removeItem('user');  // user info
+    // Axios header is dynamically set, no need to delete here
+    window.location.href = "/";
+    toast.success("Logged out successfully!");
+  } catch (error: any) {
+    toast.error(error.response?.data?.detail || "Failed to logout");
+  }
+};
 
 const SidebarNav = ({ activeView, onChange }: Props) => (
   <Sidebar className="border-r">
@@ -71,11 +86,9 @@ const SidebarNav = ({ activeView, onChange }: Props) => (
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link to="/auth">
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
-                </Link>
+              <SidebarMenuButton onClick={handleLogout}>
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

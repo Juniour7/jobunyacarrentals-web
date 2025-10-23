@@ -17,7 +17,7 @@ const DamageReportsSection = () => {
   const loadReports = async () => {
     try {
       const response = await damageReportAPI.getAll();
-      setReports(response.data);
+      setReports(Array.isArray(response.data.results) ? response.data.results : []);
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to load damage reports");
     } finally {

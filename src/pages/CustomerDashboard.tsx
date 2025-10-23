@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { bookingsAPI, userAPI, damageReportAPI } from "@/services/api";
 import { Booking } from "@/types/vehicle";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
+import {authAPI} from '@/services/api'
 
 
 
@@ -32,6 +32,18 @@ const CustomerDashboard = () => {
 
   const getFullImageUrl = (image: string) => image.startsWith("http") ? image : `https://giftmacvane.pythonanywhere.com${image}`;
 
+  const handleLogout = async () => {
+  try {
+    await authAPI.logout();
+    localStorage.removeItem('token'); // your token key
+    localStorage.removeItem('user');  // user info
+    // Axios header is dynamically set, no need to delete here
+    window.location.href = "/";
+    toast.success("Logged out successfully!");
+  } catch (error: any) {
+    toast.error(error.response?.data?.detail || "Failed to logout");
+  }
+};
 
 
 
@@ -128,12 +140,12 @@ const CustomerDashboard = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/auth">
+                    <SidebarMenuItem>
+                      <SidebarMenuButton onClick={handleLogout}>
                         <LogOut className="w-4 h-4" />
                         <span>Logout</span>
-                      </Link>
-                    </SidebarMenuButton>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
