@@ -24,9 +24,18 @@ export interface Vehicle {
   features?: string[];
 }
 
+export interface UserInfo {
+  id: number;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  license_number: string;
+}
+
 export interface Booking {
   id: number;
   user: number;
+  user_info: UserInfo; 
   vehicle: number;
   vehicle_name: string;
   vehicle_image: string;

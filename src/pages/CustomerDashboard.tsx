@@ -30,6 +30,9 @@ const CustomerDashboard = () => {
   });
   const [damageReports, setDamageReports] = useState<any[]>([]);
 
+  const getFullImageUrl = (image: string) => image.startsWith("http") ? image : `https://giftmacvane.pythonanywhere.com${image}`;
+
+
 
 
   useEffect(() => {
@@ -172,9 +175,9 @@ const CustomerDashboard = () => {
                           <div className="flex items-start justify-between">
                             <div className="flex items-start space-x-4">
                               <img
-                                src={booking.vehicle_image}
+                                src={getFullImageUrl(booking.vehicle_image)}
                                 alt={booking.vehicle_name}
-                                className="w-24 h-24 object-cover rounded-lg"
+                                className="w-24 h-24 object-contain rounded-lg"
                               />
                               <div>
                                 <CardTitle className="font-heading text-xl">{booking.vehicle_name}</CardTitle>

@@ -119,7 +119,7 @@ const VehicleDetail = () => {
       });
       toast.success("Booking request submitted successfully!");
       setBookingData({ startDate: "", endDate: "" });
-      navigate("/customer-dashboard");
+      navigate("/customer/dashboard");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to create booking");
     }

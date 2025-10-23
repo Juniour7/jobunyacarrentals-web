@@ -9,6 +9,14 @@ import { Booking } from "@/types/vehicle";
 const AdminBookingsSection = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const getFullImageUrl = (image: string) => image.startsWith("http") ? image : `https://giftmacvane.pythonanywhere.com${image}`;
+
+  const getBookingDays = (startDate: string, endDate: string) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  return `${days} day${days > 1 ? 's' : ''}`;
+};
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -59,19 +67,28 @@ const AdminBookingsSection = () => {
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-4">
                     <img
-                      src={booking.vehicle_image}
+                      src={getFullImageUrl(booking.vehicle_image)}
                       alt={booking.vehicle_name}
-                      className="w-24 h-24 object-cover rounded-lg"
+                      className="w-24 h-24 object-contain rounded-lg"
                     />
                     <div>
                       <CardTitle className="font-heading text-xl">
                         {booking.vehicle_name}
                       </CardTitle>
                       <CardDescription className="mt-2">
-                        User ID: {booking.user}
+                        Name: {booking.user_info.full_name}
+                      </CardDescription>
+                      <CardDescription className="mt-2">
+                        Email: {booking.user_info.email}
+                      </CardDescription>
+                      <CardDescription className="mt-2">
+                        Phone: {booking.user_info.phone_number}
+                      </CardDescription>
+                      <CardDescription className="mt-2">
+                        License: {booking.user_info.license_number}
                       </CardDescription>
                       <CardDescription className="mt-1">
-                        {new Date(booking.start_date).toLocaleDateString()} - {new Date(booking.end_date).toLocaleDateString()}
+                        Duration: {getBookingDays(booking.start_date, booking.end_date)}
                       </CardDescription>
                     </div>
                   </div>
