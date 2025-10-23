@@ -5,9 +5,10 @@ import OverviewSection from "@/components/admindashboard/OverviewSection";
 import VehiclesSection from "@/components/admindashboard/VehiclesSection";
 import UserSection from "@/components/admindashboard/UsersSection";
 import BookingSection from "@/components/admindashboard/BookingsSection";
+import DamageReportsSection from "@/components/admindashboard/DamageReportsSection";
 
 const AdminDashboard = () => {
-  const [activeView, setActiveView] = useState<'overview' | 'vehicles' | 'users' | 'bookings'>('overview');
+  const [activeView, setActiveView] = useState<'overview' | 'vehicles' | 'users' | 'bookings' | 'reports'>('overview');
 
   return (
     <SidebarProvider>
@@ -23,6 +24,8 @@ const AdminDashboard = () => {
                   ? 'Vehicle Inventory'
                   : activeView === 'users'
                   ? 'User Management'
+                  : activeView === 'reports'
+                  ? 'Damage Reports'
                   : 'Bookings Management'}
               </h1>
             </div>
@@ -33,6 +36,7 @@ const AdminDashboard = () => {
             {activeView === "vehicles" && <VehiclesSection />}
             {activeView === "users" && <UserSection />}
             {activeView === "bookings" && <BookingSection />}
+            {activeView === "reports" && <DamageReportsSection />}
           </div>
         </main>
       </div>

@@ -75,4 +75,26 @@ export const userAPI = {
   getCustomerList: () => api.get('/user/customer-list/'),
 };
 
+export const damageReportAPI = {
+  create: (data: { booking: number; description: string; images?: File[] }) => {
+    const formData = new FormData();
+    formData.append('booking', data.booking.toString());
+    formData.append('description', data.description);
+    if (data.images) {
+      data.images.forEach((img) => formData.append('images', img));
+    }
+    return api.post('/damage-reports/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  getAll: () => api.get('/admin/damage-reports/'),
+  getById: (id: number) => api.get(`/admin/damage-reports/${id}/`),
+  updateStatus: (id: number, status: string) => 
+    api.patch(`/admin/damage-reports/${id}/`, { status }),
+};
+
+export const statsAPI = {
+  getOverview: () => api.get('/admin/stats/overview/'),
+};
+
 export default api;

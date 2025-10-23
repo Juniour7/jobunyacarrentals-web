@@ -32,6 +32,7 @@ const VehiclesSection = () => {
     features: "",
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [additionalImages, setAdditionalImages] = useState<FileList | null>(null);
 
   const loadVehicles = async () => {
     try {
@@ -78,6 +79,11 @@ const VehiclesSection = () => {
     formData.append("features", vehicleData.features);
     if (imageFile) {
       formData.append("image", imageFile);
+    }
+    if (additionalImages) {
+      Array.from(additionalImages).forEach((img) => {
+        formData.append("images", img);
+      });
     }
 
     try {
@@ -139,6 +145,7 @@ const VehiclesSection = () => {
       features: "",
     });
     setImageFile(null);
+    setAdditionalImages(null);
     setEditingVehicle(null);
   };
 
@@ -251,8 +258,20 @@ const VehiclesSection = () => {
             </div>
 
             <div>
-              <Label htmlFor="image">Vehicle Image</Label>
+              <Label htmlFor="image">Main Vehicle Image</Label>
               <Input id="image" type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
+            </div>
+
+            <div>
+              <Label htmlFor="additional-images">Additional Images (optional)</Label>
+              <Input 
+                id="additional-images" 
+                type="file" 
+                accept="image/*" 
+                multiple 
+                onChange={(e) => setAdditionalImages(e.target.files)} 
+              />
+              <p className="text-xs text-muted-foreground mt-1">You can select multiple images</p>
             </div>
 
             <Button type="submit" variant="accent" className="w-full">

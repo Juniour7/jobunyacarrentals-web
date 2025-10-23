@@ -14,6 +14,7 @@ const Auth = () => {
 
   // Login form state
   const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [loginLoading, setLoginLoading] = useState(false);
 
   // Signup form state
   const [signupData, setSignupData] = useState({
@@ -25,12 +26,14 @@ const Auth = () => {
     confirmPassword: "",
     agree_terms: false, // must agree to terms
   });
+  const [signupLoading, setSignupLoading] = useState(false);
 
   // ----------------------------
   // LOGIN HANDLER
   // ----------------------------
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoginLoading(true);
 
     try {
       const response = await authAPI.login({
@@ -55,6 +58,8 @@ const Auth = () => {
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.detail || "Invalid email or password. Please try again.");
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -73,6 +78,8 @@ const Auth = () => {
       toast.error("You must agree to the terms and conditions.");
       return;
     }
+
+    setSignupLoading(true);
 
     try {
       const response = await authAPI.register({
@@ -107,6 +114,8 @@ const Auth = () => {
       } else {
         toast.error("Registration failed. Please try again.");
       }
+    } finally {
+      setSignupLoading(false);
     }
   };
 
@@ -162,8 +171,8 @@ const Auth = () => {
                       className="mt-2"
                     />
                   </div>
-                  <Button type="submit" variant="accent" className="w-full" size="lg">
-                    Login
+                  <Button type="submit" variant="accent" className="w-full" size="lg" disabled={loginLoading}>
+                    {loginLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
               </CardContent>
@@ -268,8 +277,8 @@ const Auth = () => {
                     </Label>
                   </div>
 
-                  <Button type="submit" variant="accent" className="w-full" size="lg">
-                    Create Account
+                  <Button type="submit" variant="accent" className="w-full" size="lg" disabled={signupLoading}>
+                    {signupLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
               </CardContent>

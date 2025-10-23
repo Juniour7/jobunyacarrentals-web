@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { vehiclesAPI, bookingsAPI } from "@/services/api";
 import { Vehicle } from "@/types/vehicle";
+import VehicleCard from "@/components/VehicleCard";
 
 const VehicleDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -21,6 +22,7 @@ const VehicleDetail = () => {
   const [bookingData, setBookingData] = useState({ startDate: "", endDate: "" });
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [similarVehicles, setSimilarVehicles] = useState<Vehicle[]>([]);
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -45,7 +47,7 @@ const VehicleDetail = () => {
           transmission: v.transmission,
           fuelType: v.fuel_type,
           mileage: "Unlimited",
-          mindDays: v.min_days ?? 1,
+          min_days: v.min_days ?? 1,
           engine: v.engine,
           enginePower: "N/A",
           engineTorque: v.engine_torque || "N/A",
@@ -56,6 +58,34 @@ const VehicleDetail = () => {
         });
 
         setSelectedImage(mainImage);
+
+        // Fetch similar vehicles
+        const similarResponse = await vehiclesAPI.getAll({ car_type: v.car_type });
+        const similar = similarResponse.data.results
+          .filter((sv: any) => sv.slug !== slug)
+          .slice(0, 3)
+          .map((sv: any) => ({
+            id: sv.id.toString(),
+            slug: sv.slug,
+            name: sv.name,
+            category: sv.car_type,
+            pricePerDay: parseFloat(sv.daily_rate),
+            rating: 4.5,
+            image: sv.image.startsWith("http") ? sv.image : `https://giftmacvane.pythonanywhere.com${sv.image}`,
+            seats: sv.seats,
+            transmission: sv.transmission,
+            fuelType: sv.fuel_type,
+            mileage: "Unlimited",
+            min_days: sv.min_days ?? 1,
+            engine: sv.engine,
+            enginePower: "N/A",
+            engineTorque: "N/A",
+            fuelEconomy: { city: "N/A", highway: "N/A" },
+            available: sv.status === "Available",
+            features: sv.features ? sv.features.split(",").map((f: string) => f.trim()) : [],
+            description: sv.description,
+          }));
+        setSimilarVehicles(similar);
       } catch (error) {
         toast.error("Failed to load vehicle");
       } finally {
@@ -236,7 +266,7 @@ const VehicleDetail = () => {
     </div>
     <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
       <span className="text-muted-foreground">Minimum Hire Period</span>
-      <span className="font-medium">{vehicle.mindDays} days</span>
+      <span className="font-medium">{vehicle.min_days} days</span>
     </div>
     <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
       <span className="text-muted-foreground">Mileage</span>
@@ -383,6 +413,20 @@ const VehicleDetail = () => {
           </div>
         </div>
       </section>
+
+      {/* Similar Vehicles Section */}
+      {similarVehicles.length > 0 && (
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-secondary">
+          <div className="container mx-auto max-w-6xl">
+            <h2 className="font-heading text-3xl font-bold mb-8">Similar Vehicles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {similarVehicles.map((v) => (
+                <VehicleCard key={v.id} vehicle={v} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>

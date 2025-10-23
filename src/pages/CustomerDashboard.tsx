@@ -10,28 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { bookingsAPI, userAPI } from "@/services/api";
+import { bookingsAPI, userAPI, damageReportAPI } from "@/services/api";
 import { Booking } from "@/types/vehicle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 
-const mockReports: Array<{
-  id: string;
-  bookingId: string;
-  vehicleName: string;
-  description: string;
-  dateReported: string;
-  status: 'pending' | 'reviewed' | 'resolved';
-}> = [
-  {
-    id: "1",
-    bookingId: "2",
-    vehicleName: "Range Rover Vogue",
-    description: "Minor scratch on rear bumper from parking",
-    dateReported: "2025-09-24",
-    status: 'reviewed'
-  }
-];
 
 const CustomerDashboard = () => {
   const [activeView, setActiveView] = useState<'bookings' | 'reports' | 'profile'>('bookings');
@@ -44,20 +28,21 @@ const CustomerDashboard = () => {
     new_password: "",
     new_password2: ""
   });
+  const [damageReports, setDamageReports] = useState<any[]>([]);
 
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [bookingsRes, profileRes] = await Promise.all([
-          bookingsAPI.getMyBookings(),
-          userAPI.getProfile()
-        ]);
+        const bookingsRes = await bookingsAPI.getMyBookings();
         setBookings(bookingsRes.data);
+
+        const profileRes = await userAPI.getProfile();
         setProfile(profileRes.data);
-      } catch (error) {
-        toast.error("Failed to load data");
+      } catch (error: any) {
+        console.error("Error loading data:", error);
+        toast.error(error.response?.data?.message || "Failed to load data");
       } finally {
         setLoading(false);
       }
@@ -66,10 +51,18 @@ const CustomerDashboard = () => {
     fetchData();
   }, []);
 
-  const handleSubmitReport = (e: React.FormEvent) => {
+  const handleSubmitReport = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Damage report submitted successfully!");
-    setReportData({ bookingId: "", description: "" });
+    try {
+      await damageReportAPI.create({
+        booking: parseInt(reportData.bookingId),
+        description: reportData.description,
+      });
+      toast.success("Damage report submitted successfully!");
+      setReportData({ bookingId: "", description: "" });
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to submit damage report");
+    }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -226,20 +219,21 @@ const CustomerDashboard = () => {
                     <form onSubmit={handleSubmitReport} className="space-y-4">
                       <div>
                         <Label htmlFor="booking">Related Booking</Label>
-                        <select
-                          id="booking"
-                          className="w-full mt-2 px-3 py-2 border rounded-md"
-                          value={reportData.bookingId}
-                          onChange={(e) => setReportData({...reportData, bookingId: e.target.value})}
-                          required
+                        <Select 
+                          value={reportData.bookingId} 
+                          onValueChange={(value) => setReportData({...reportData, bookingId: value})}
                         >
-                          <option value="">Select a booking</option>
-                          {bookings.map((booking) => (
-                            <option key={booking.id} value={booking.id}>
-                              {booking.vehicle_name} - {new Date(booking.start_date).toLocaleDateString()}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Select a booking" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {bookings.map((booking) => (
+                              <SelectItem key={booking.id} value={booking.id.toString()}>
+                                {booking.vehicle_name} - {new Date(booking.start_date).toLocaleDateString()}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div>
                         <Label htmlFor="description">Description</Label>
@@ -260,32 +254,40 @@ const CustomerDashboard = () => {
                 </Dialog>
 
                 <div className="grid gap-6">
-                  {mockReports.map((report) => (
-                    <Card key={report.id}>
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <CardTitle className="font-heading text-xl">{report.vehicleName}</CardTitle>
-                            <CardDescription className="mt-2">
-                              Reported on {new Date(report.dateReported).toLocaleDateString()}
-                            </CardDescription>
-                          </div>
-                          <Badge 
-                            variant={
-                              report.status === 'pending' 
-                                ? 'destructive' 
-                                : 'default'
-                            }
-                          >
-                            {report.status}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground">{report.description}</p>
+                  {damageReports.length === 0 ? (
+                    <Card>
+                      <CardContent className="p-12 text-center">
+                        <p className="text-muted-foreground">No damage reports submitted yet</p>
                       </CardContent>
                     </Card>
-                  ))}
+                  ) : (
+                    damageReports.map((report) => (
+                      <Card key={report.id}>
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <CardTitle className="font-heading text-xl">{report.booking_details?.vehicle_name}</CardTitle>
+                              <CardDescription className="mt-2">
+                                Reported on {new Date(report.created_at).toLocaleDateString()}
+                              </CardDescription>
+                            </div>
+                            <Badge 
+                              variant={
+                                report.status === 'pending' 
+                                  ? 'destructive' 
+                                  : 'default'
+                              }
+                            >
+                              {report.status}
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">{report.description}</p>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
                 </div>
               </div>
             )}

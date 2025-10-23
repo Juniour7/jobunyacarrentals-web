@@ -9,11 +9,11 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Car, Users, BarChart3, LogOut, Home, Calendar } from "lucide-react";
+import { Car, Users, BarChart3, LogOut, Home, Calendar, FileWarning } from "lucide-react";
 
 interface Props {
   activeView: string;
-  onChange: (view: "overview" | "vehicles" | "users" | "bookings") => void;
+  onChange: (view: "overview" | "vehicles" | "users" | "bookings" | "reports") => void;
 }
 
 const SidebarNav = ({ activeView, onChange }: Props) => (
@@ -54,6 +54,12 @@ const SidebarNav = ({ activeView, onChange }: Props) => (
               <SidebarMenuButton onClick={() => onChange("bookings")} isActive={activeView === "bookings"}>
                 <Calendar className="w-4 h-4" />
                 <span>Bookings</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => onChange("reports")} isActive={activeView === "reports"}>
+                <FileWarning className="w-4 h-4" />
+                <span>Damage Reports</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
