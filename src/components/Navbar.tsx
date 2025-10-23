@@ -43,7 +43,7 @@ const Navbar = () => {
             <div className="w-12 h-12 bg-foreground rounded-full flex items-center justify-center">
               <Car className="w-7 h-7 text-background" />
             </div>
-            <span className="font-heading text-xl font-semibold">EliteMotion</span>
+            <span className="font-heading text-xl font-semibold">Jobunya Cars</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">

@@ -11,7 +11,7 @@ const Footer = () => {
               <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
                 <Car className="w-6 h-6 text-foreground" />
               </div>
-              <span className="font-heading text-xl font-semibold">EliteMotion</span>
+              <span className="font-heading text-xl font-semibold">Car Rentals</span>
             </div>
             <p className="text-sm text-background/70">
               Premium self-drive and chauffeured car rentals for discerning clients who demand excellence.
@@ -68,7 +68,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center space-x-2 text-sm text-background/70">
                 <Mail className="w-4 h-4 flex-shrink-0" />
-                <span>info@elitemotion.co.ke</span>
+                <span>info@jobumyacarrentals.com</span>
               </li>
             </ul>
           </div>
@@ -76,7 +76,7 @@ const Footer = () => {
         
         <div className="border-t border-background/20 mt-8 pt-8 text-center">
           <p className="text-sm text-background/70">
-            © 2025 EliteMotion Car Hire. All rights reserved.
+            © 2025 Car Rental Car Hire. All rights reserved.
           </p>
         </div>
       </div>
