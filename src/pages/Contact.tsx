@@ -137,8 +137,8 @@ const Contact = () => {
                     <div>
                       <h3 className="font-semibold mb-1">Email</h3>
                       <p className="text-muted-foreground">
-                        info@elitemotion.co.ke<br />
-                        bookings@elitemotion.co.ke
+                        info@joobunyacarrentals.com<br />
+                        bookings@joobunyacarrentals.com
                       </p>
                     </div>
                   </div>

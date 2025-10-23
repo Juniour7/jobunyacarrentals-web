@@ -67,7 +67,23 @@ const DamageReportsSection = () => {
             <Card key={report.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div>
+                  
+        
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                              {report.booking_details?.vehicle_image && (
+                                <div className="mt-4">
+                                  <img
+                                    src={report.booking_details.vehicle_image.startsWith("http")
+                                      ? report.booking_details.vehicle_image
+                                      : `https://giftmacvane.pythonanywhere.com${report.booking_details.vehicle_image}`}
+                                    alt={report.booking_details.vehicle_name}
+                                    className="w-28 h-24 object-contain rounded-md"
+                                  />
+                                </div>
+                              )}
+                    </div>
+                    <div>
                     <CardTitle className="font-heading text-xl">
                       {report.booking_details?.vehicle_name || "Vehicle"}
                     </CardTitle>
@@ -75,6 +91,7 @@ const DamageReportsSection = () => {
                       Reported by {report.user_details?.full_name} on{" "}
                       {new Date(report.created_at).toLocaleDateString()}
                     </CardDescription>
+                  </div>
                   </div>
                   <Badge
                     variant={

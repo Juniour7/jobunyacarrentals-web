@@ -48,10 +48,6 @@ api.interceptors.response.use(
 );
 
 
-
-
-
-
 export const authAPI = {
   register: (data: {
     full_name: string;
@@ -123,6 +119,8 @@ export const damageReportAPI = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
   },
+  // Customer-specific: get all reports submitted by the logged-in user
+  getMyReports: () => api.get('/damage-reports/'),
   getAll: () => api.get('/admin/damage-reports/'),
   getById: (id: number) => api.get(`/admin/damage-reports/${id}/`),
   updateStatus: (id: number, status: string) => 

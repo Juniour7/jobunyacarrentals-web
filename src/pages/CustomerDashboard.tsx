@@ -55,6 +55,9 @@ const CustomerDashboard = () => {
 
         const profileRes = await userAPI.getProfile();
         setProfile(profileRes.data);
+
+        const reportsRes = await damageReportAPI.getMyReports(); // fetch customer reports
+        setDamageReports(reportsRes.data.results);
       } catch (error: any) {
         console.error("Error loading data:", error);
         toast.error(error.response?.data?.message || "Failed to load data");
@@ -280,11 +283,24 @@ const CustomerDashboard = () => {
                       <Card key={report.id}>
                         <CardHeader>
                           <div className="flex items-start justify-between">
-                            <div>
-                              <CardTitle className="font-heading text-xl">{report.booking_details?.vehicle_name}</CardTitle>
+                            <div className="flex items-center gap-2">
+                              {report.booking_details?.vehicle_image && (
+                                <div className="mt-4">
+                                  <img
+                                    src={report.booking_details.vehicle_image.startsWith("http")
+                                      ? report.booking_details.vehicle_image
+                                      : `https://giftmacvane.pythonanywhere.com${report.booking_details.vehicle_image}`}
+                                    alt={report.booking_details.vehicle_name}
+                                    className="w-28 h-24 object-contain rounded-md"
+                                  />
+                                </div>
+                              )}
+                              <div>
+                                <CardTitle className="font-heading text-xl">{report.booking_details?.vehicle_name}</CardTitle>
                               <CardDescription className="mt-2">
                                 Reported on {new Date(report.created_at).toLocaleDateString()}
                               </CardDescription>
+                              </div>
                             </div>
                             <Badge 
                               variant={
