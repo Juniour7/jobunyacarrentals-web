@@ -130,7 +130,7 @@ const Auth = () => {
           <div className="w-12 h-12 bg-foreground rounded-full flex items-center justify-center">
             <Car className="w-7 h-7 text-background" />
           </div>
-          <span className="font-heading text-2xl font-semibold">EliteMotion</span>
+          <span className="font-heading text-2xl font-semibold">Jobunya Cars</span>
         </Link>
 
         <Tabs defaultValue="login" className="w-full">

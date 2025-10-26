@@ -38,7 +38,7 @@ const SidebarNav = ({ activeView, onChange }: Props) => (
         <div className="w-10 h-10 bg-foreground rounded-full flex items-center justify-center">
           <Car className="w-6 h-6 text-background" />
         </div>
-        <span className="font-heading text-lg font-semibold">EliteMotion</span>
+        <span className="font-heading text-lg font-semibold">Jobunya Cars</span>
       </Link>
     </div>
 
