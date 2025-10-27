@@ -62,13 +62,17 @@ const Footer = () => {
                 <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
                 <span>Nairobi, Kenya</span>
               </li>
-              <li className="flex items-center space-x-2 text-sm text-background/70">
-                <Phone className="w-4 h-4 flex-shrink-0" />
-                <span>+254 700 000 000</span>
+              <li className=" text-sm text-background/70">
+                <a href="tel:0723565952" className="flex items-center space-x-2 hover:text-[#07b6d5] transition-colors duration-300 ease-in-out">
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span>+254 723 565 952</span>
+                </a>
               </li>
-              <li className="flex items-center space-x-2 text-sm text-background/70">
-                <Mail className="w-4 h-4 flex-shrink-0" />
-                <span>info@jobumyacarrentals.com</span>
+              <li className=" text-sm text-background/70">
+                <a href="mailto:info@jobunyacarrentals.co.ke" className="flex items-center space-x-2 hover:text-[#07b6d5] transition-colors duration-300 ease-in-out">
+                  <Mail className="w-4 h-4 flex-shrink-0" />
+                  <span>info@jobunyacarrentals.co.ke</span>
+                </a>
               </li>
             </ul>
           </div>

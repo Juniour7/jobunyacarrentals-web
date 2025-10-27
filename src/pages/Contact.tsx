@@ -124,8 +124,7 @@ const Contact = () => {
                     <div>
                       <h3 className="font-semibold mb-1">Phone</h3>
                       <p className="text-muted-foreground">
-                        +254 700 000 000<br />
-                        +254 711 111 111
+                        <a href="tel:+254 723 565 952 " className="hover:text-[#07b6d5] transition-colors duration-300 ease-in-out">+254 723 565 952</a>
                       </p>
                     </div>
                   </div>
@@ -137,8 +136,8 @@ const Contact = () => {
                     <div>
                       <h3 className="font-semibold mb-1">Email</h3>
                       <p className="text-muted-foreground">
-                        info@joobunyacarrentals.com<br />
-                        bookings@joobunyacarrentals.com
+                        <a href="mailto:info@joobunyacarrentals.co.ke" className="hover:text-[#07b6d5] transition-colors duration-300 ease-in-out">info@jobunyacarrentals.co.ke</a><br />
+                        <a href="mailto:bookings@jobunyacarrentals.co.ke" className="hover:text-[#07b6d5] transition-colors duration-300 ease-in-out">bookings@jobunyacarrentals.co.ke</a>
                       </p>
                     </div>
                   </div>

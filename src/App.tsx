@@ -12,6 +12,7 @@ import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import BackToTop from "./components/BackToTop";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+          <BackToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/fleet" element={<Fleet />} />

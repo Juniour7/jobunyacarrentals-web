@@ -150,7 +150,7 @@ const VehicleDetail = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="pt-32 pb-20 ">
         <div className="container mx-auto max-w-6xl">
           <Link
             to="/fleet"
@@ -418,8 +418,8 @@ const VehicleDetail = () => {
 
       {/* Similar Vehicles Section */}
       {similarVehicles.length > 0 && (
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-secondary">
-          <div className="container mx-auto max-w-6xl">
+        <section className="py-16 bg-secondary">
+          <div className="container mx-auto ">
             <h2 className="font-heading text-3xl font-bold mb-8">Similar Vehicles</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {similarVehicles.map((v) => (
