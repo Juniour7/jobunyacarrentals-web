@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap, X } from "lucide-react";
+import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap, X, Check, CircleCheckBig } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +37,7 @@ const VehicleDetail = () => {
         setVehicle({
           id: v.id.toString(),
           name: v.name,
+          status: v.status,
           slug: v.slug,
           category: v.car_type,
           description: v.description,
@@ -68,6 +69,7 @@ const VehicleDetail = () => {
             id: sv.id.toString(),
             slug: sv.slug,
             name: sv.name,
+            status: v.status,
             category: sv.car_type,
             pricePerDay: parseFloat(sv.daily_rate),
             rating: 4.5,
@@ -164,20 +166,19 @@ const VehicleDetail = () => {
               {/* Main Image */}
               <h1 className="text-4xl font-heading">{vehicle.name}</h1>
               <div
-                className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl mb-4 cursor-pointer group"
+                className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 cursor-pointer group"
                 onClick={() => setLightboxOpen(true)}
               >
                 <motion.img
                   key={selectedImage}
                   src={selectedImage || vehicle.image}
                   alt={vehicle.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain  transition-transform duration-500"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4 }}
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
               </div>
 
               {/* Thumbnails */}
@@ -192,7 +193,7 @@ const VehicleDetail = () => {
                       key={index}
                       src={img}
                       alt={`Thumbnail ${index + 1}`}
-                      className={`w-20 h-16 object-cover rounded-lg cursor-pointer border-2 transition-all ${
+                      className={`w-20 h-16 object-contain rounded-lg cursor-pointer border-2 transition-all ${
                         selectedImage === img ? "border-accent scale-105" : "border-transparent hover:opacity-80"
                       }`}
                       onClick={() => setSelectedImage(img)}
@@ -297,9 +298,10 @@ const VehicleDetail = () => {
     {vehicle.features.length > 0 && (
       <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
         <span className="text-muted-foreground">Features</span>
-        <ul className="list-disc list-inside text-sm text-muted-foreground">
+        <ul className="list-none list-inside text-sm text-muted-foreground">
           {vehicle.features.map((feature, i) => (
-            <li key={i} className="text-foreground">{feature}</li>
+            <li key={i} className="text-foreground flex items-center gap-1"><span><CircleCheckBig className="w-3 h-3" /></span>{feature}</li>
+
           ))}
         </ul>
       </div>

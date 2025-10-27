@@ -1,6 +1,6 @@
 import { Vehicle } from "@/types/vehicle";
 import { Button } from "./ui/button";
-import { Star, ArrowRight } from "lucide-react";
+import { Star, ArrowRight, CircleCheckBig, Sun, Users, Fuel } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface VehicleCardProps {
@@ -8,6 +8,7 @@ interface VehicleCardProps {
 }
 
 const VehicleCard = ({ vehicle }: VehicleCardProps) => {
+
   return (
     <div className="bg-card rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
       <div className="relative overflow-hidden aspect-[4/3]">
@@ -16,13 +17,34 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           alt={vehicle.name}
           className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
         />
-        {!vehicle.available && (
-          <div className="absolute inset-0 bg-foreground/60 flex items-center justify-center">
-            <span className="bg-background px-4 py-2 rounded-md font-medium">
-              Currently Unavailable
-            </span>
+        <div className="absolute top-3 right-3 space-y-2">
+          {vehicle.status == 'Available' && (
+            <div className="bg-[#dcfce7] text-[#22c55e] rounded-md p-1 flex justify-center items-center gap-1 text-xs">
+              <span><CircleCheckBig className="w-3 h-3" /></span>
+              Available
+            </div>
+          )}
+          {vehicle.status == 'Booked' && (
+            <div className="bg-[#ef4343]/10 text-[#ef4343] rounded-md p-1 flex justify-center items-center gap-1 text-xs">
+              <span><CircleCheckBig className="w-3 h-3" /></span>
+              Booked
+            </div>
+          )}
+          {vehicle.features?.includes('Sunroof') && (
+            <div className="bg-[#fef3c7] text-[#b16e26] rounded-md p-1 flex justify-center items-center gap-1 text-xs">
+              <span><Sun className="w-3 h-3" /></span>
+              Sunroof
+            </div>
+          )}
+          <div className="bg-[#f3e8ff] text-[#6b3ac1] rounded-md p-1 flex justify-center items-center gap-1 text-xs">
+            <span><Users className="w-3 h-3" /></span>
+            {vehicle.seats} Seater
           </div>
-        )}
+          <div className="bg-[#dbeafe] text-[#005a7a] rounded-md p-1 flex justify-center items-center gap-1 text-xs">
+            <span><Fuel className="w-3 h-3" /></span>
+            {vehicle.fuelType}
+          </div>
+        </div>
       </div>
       
       <div className="p-6">

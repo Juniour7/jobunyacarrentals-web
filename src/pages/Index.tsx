@@ -22,6 +22,7 @@ const Index = () => {
           name: v.name,
           slug: v.slug,
           category: v.car_type,
+          status: v.status,
           pricePerDay: parseFloat(v.daily_rate),
           rating: 4.5,
           image: v.image,
@@ -59,7 +60,7 @@ const Index = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-secondary to-background lg:min-h-screen flex flex-col justify-center items-center">
+      <section className="relative pt-32 pb-20  bg-gradient-to-b from-secondary to-background lg:min-h-screen flex flex-col justify-center items-center">
         <div className="container mx-auto text-center max-w-4xl">
           <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in">
             Elevate Your Journey
@@ -85,7 +86,7 @@ const Index = () => {
       </section>
 
       {/* Featured Vehicles Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary">
+      <section className="py-20  bg-secondary">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
@@ -114,7 +115,7 @@ const Index = () => {
 
           <div className="text-center">
             <Link to="/fleet">
-              <Button variant="accent" size="lg">
+              <Button className="w-full" variant="accent" size="lg">
                 View Full Fleet
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>

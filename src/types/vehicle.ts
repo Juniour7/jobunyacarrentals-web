@@ -8,6 +8,7 @@ export interface Vehicle {
   image: string;
   images?: { id: number; image: string }[]; 
   seats: number;
+  status: 'Available' | 'Booked';
   description: string;
   transmission: string;
   fuelType: string;
