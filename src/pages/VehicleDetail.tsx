@@ -164,7 +164,7 @@ const VehicleDetail = () => {
             {/* Vehicle Image Gallery */}
             <div className="space-y-3">
               {/* Main Image */}
-              <h1 className="text-4xl font-heading">{vehicle.name}</h1>
+              <h1 className="text-4xl font-heading">{vehicle.name} for Hire</h1>
               <div
                 className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 cursor-pointer group"
                 onClick={() => setLightboxOpen(true)}
@@ -362,7 +362,7 @@ const VehicleDetail = () => {
                     className="w-full mb-4"
                     disabled={!vehicle.available}
                   >
-                    {vehicle.available ? "Book Now" : "Currently Unavailable"}
+                    {vehicle.available ? "Book Now" : "Currently Booked"}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">

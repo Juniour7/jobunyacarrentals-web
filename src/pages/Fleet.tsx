@@ -62,7 +62,7 @@ const Fleet = () => {
   
   const categories = ["ALL", "Sedan", "SUV", "Luxury", "Sports"];
   const transmissions = ["ALL", "Automatic", "Manual"];
-  const fuelTypes = ["ALL", "Petrol", "Diesel", "Electric", "Hybrid"];
+  const fuelTypes = ["ALL", "Petrol", "Diesel"];
 
   return (
     <div className="min-h-screen">
@@ -81,21 +81,21 @@ const Fleet = () => {
           </div>
           
           {/* Search and Filter */}
-          <div className="space-y-4 mb-12">
-            <div className="relative max-w-md mx-auto">
+          <div className="flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 mb-12">
+            <div className="relative w-full md:w-[50%]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
                 type="text"
                 placeholder="Search vehicles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 w-full"
               />
             </div>
             
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -106,7 +106,7 @@ const Fleet = () => {
               </Select>
               
               <Select value={transmissionFilter} onValueChange={setTransmissionFilter}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="">
                   <SelectValue placeholder="Transmission" />
                 </SelectTrigger>
                 <SelectContent>
@@ -117,7 +117,7 @@ const Fleet = () => {
               </Select>
               
               <Select value={fuelTypeFilter} onValueChange={setFuelTypeFilter}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="">
                   <SelectValue placeholder="Fuel Type" />
                 </SelectTrigger>
                 <SelectContent>
