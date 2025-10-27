@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger } from "@/components/ui/sidebar";
-import { Car, Calendar, FileWarning, LogOut, Home, User, Lock } from "lucide-react";
+import { Car, Calendar, FileWarning, LogOut, Home, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -159,9 +159,11 @@ const CustomerDashboard = () => {
         <main className="flex-1">
           <header className="border-b bg-background sticky top-0 z-10">
             <div className="flex items-center justify-between p-4">
-              <div className="flex items-center space-x-4">
-                <SidebarTrigger />
-                <h1 className="font-heading text-2xl font-bold">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                </SidebarTrigger>
+                <h1 className="font-heading text-xl md:text-2xl font-bold">
                   {activeView === 'bookings' ? 'My Bookings' : activeView === 'reports' ? 'Damage Reports' : 'My Profile'}
                 </h1>
               </div>
@@ -393,7 +395,6 @@ const CustomerDashboard = () => {
                         />
                       </div>
                       <Button type="submit" variant="accent" className="w-full">
-                        <Lock className="w-4 h-4 mr-2" />
                         Change Password
                       </Button>
                     </form>

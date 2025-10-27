@@ -117,7 +117,7 @@ const VehiclesSection = () => {
     features: vehicle.features?.join(", ") || "",
     min_days: vehicle.min_days?.toString() || "1",
     engine: vehicle.engine || "",
-    engine_torque: vehicle.engine_torque || "",
+    engine_torque: vehicle.engineTorque || "",
   });
   setIsDialogOpen(true);
 };
@@ -147,6 +147,9 @@ const VehiclesSection = () => {
       daily_rate: "",
       status: "Available",
       features: "",
+      min_days: "1",
+      engine: "",
+      engine_torque: "",
     });
     setImageFile(null);
     setAdditionalImages(null);
