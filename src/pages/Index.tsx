@@ -42,7 +42,7 @@ const Index = () => {
         // Select 3 featured vehicles (first 3 available)
         const featured = apiVehicles
           .filter((v: Vehicle) => v.available)
-          .slice(0, 3);
+          .slice(0, 6);
 
         setFeaturedVehicles(featured);
       } catch (error) {
@@ -115,7 +115,7 @@ const Index = () => {
 
           <div className="text-center">
             <Link to="/fleet">
-              <Button className="w-full" variant="accent" size="lg">
+              <Button className="w-full md:w-auto" variant="accent" size="lg">
                 View Full Fleet
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
