@@ -354,64 +354,16 @@ const VehicleDetail = () => {
                 </div>
               </div> */}
 
-              {/* Booking Dialog */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="accent"
-                    size="lg"
-                    className="w-full mb-4"
-                    disabled={!vehicle.available}
-                  >
-                    {vehicle.available ? "Reserve Now & Pay Later" : "Currently Reserved"}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle className="font-heading text-2xl">
-                      Book {vehicle.name}
-                    </DialogTitle>
-                    <DialogDescription>
-                      Fill in your details and rental dates to proceed with booking.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handleBooking} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="startDate">Start Date</Label>
-                        <Input
-                          id="startDate"
-                          type="date"
-                          value={bookingData.startDate}
-                          onChange={(e) =>
-                            setBookingData({ ...bookingData, startDate: e.target.value })
-                          }
-                          required
-                          min={new Date().toISOString().split("T")[0]}
-                          className="mt-2"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="endDate">End Date</Label>
-                        <Input
-                          id="endDate"
-                          type="date"
-                          value={bookingData.endDate}
-                          onChange={(e) =>
-                            setBookingData({ ...bookingData, endDate: e.target.value })
-                          }
-                          required
-                          min={bookingData.startDate || new Date().toISOString().split("T")[0]}
-                          className="mt-2"
-                        />
-                      </div>
-                    </div>
-                    <Button type="submit" variant="accent" className="w-full" size="lg">
-                      Submit Reservation Request
-                    </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+              {/* Booking Button */}
+              <Button
+                variant="accent"
+                size="lg"
+                className="w-full mb-4"
+                disabled={!vehicle.available}
+                onClick={() => navigate(`/booking/${vehicle.slug}`)}
+              >
+                {vehicle.available ? "Reserve Now & Pay Later" : "Currently Reserved"}
+              </Button>
             </div>
           </div>
         </div>

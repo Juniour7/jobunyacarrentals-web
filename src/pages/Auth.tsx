@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Car } from "lucide-react";
+import { Car, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI } from "@/services/api";
 
@@ -172,8 +172,20 @@ const Auth = () => {
                     />
                   </div>
                   <Button type="submit" variant="accent" className="w-full" size="lg" disabled={loginLoading}>
-                    {loginLoading ? "Logging in..." : "Login"}
+                    {loginLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Logging in...
+                      </>
+                    ) : (
+                      "Login"
+                    )}
                   </Button>
+                  <div className="text-center mt-4">
+                    <Link to="/password-reset" className="text-sm text-accent hover:underline">
+                      Forgot password?
+                    </Link>
+                  </div>
                 </form>
               </CardContent>
             </Card>
@@ -278,7 +290,14 @@ const Auth = () => {
                   </div>
 
                   <Button type="submit" variant="accent" className="w-full" size="lg" disabled={signupLoading}>
-                    {signupLoading ? "Creating Account..." : "Create Account"}
+                    {signupLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating account...
+                      </>
+                    ) : (
+                      "Create Account"
+                    )}
                   </Button>
                 </form>
               </CardContent>

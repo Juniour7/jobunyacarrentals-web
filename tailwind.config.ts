@@ -59,8 +59,8 @@ export default {
         },
       },
       fontFamily: {
-        heading: ['Lato'],
-        body: ['Inter'],
+        heading: ['Montserrat', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
       },
       boxShadow: {
         sm: 'var(--shadow-sm)',

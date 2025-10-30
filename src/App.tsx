@@ -7,7 +7,10 @@ import Index from "./pages/Index";
 import Fleet from "./pages/Fleet";
 import Contact from "./pages/Contact";
 import VehicleDetail from "./pages/VehicleDetail";
+import Booking from "./pages/Booking";
 import Auth from "./pages/Auth";
+import PasswordResetRequest from "./pages/PasswordResetRequest";
+import PasswordResetConfirm from "./pages/PasswordResetConfirm";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
@@ -28,7 +31,10 @@ const App = () => (
           <Route path="/fleet" element={<Fleet />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/vehicle/:slug" element={<VehicleDetail />} />
+          <Route path="/booking/:slug" element={<Booking />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/password-reset" element={<PasswordResetRequest />} />
+          <Route path="/password-reset-confirm" element={<PasswordResetConfirm />} />
           <Route path="/customer/dashboard" element={<ProtectedRoute role='customer'><CustomerDashboard /></ProtectedRoute>} />
           <Route path="/admin/dashboard" element={<ProtectedRoute role='admin'><AdminDashboard /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

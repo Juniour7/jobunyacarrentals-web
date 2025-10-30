@@ -63,6 +63,12 @@ export const authAPI = {
     api.post('/user/login/', data),
 
   logout: () => api.post('/user/logout/'),
+  
+  requestPasswordReset: (email: string) => 
+    api.post('/user/password-reset/', { email }),
+  
+  confirmPasswordReset: (data: { uid: string; token: string; new_password: string; new_password2: string }) =>
+    api.post('/user/password-reset-confirm/', data),
 };
 
 export const vehiclesAPI = {
