@@ -98,7 +98,7 @@ const Auth = () => {
         toast.success("Registration successful!");
         navigate("/customer/dashboard");
       } else {
-        toast.success("Registration successful! Please login.");
+        toast.success("Registration successful! Please check your email to verify your account.");
       }
     } catch (error) {
       console.error("Signup error:", error.response?.data);

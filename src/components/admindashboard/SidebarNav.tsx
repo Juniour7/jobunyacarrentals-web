@@ -9,13 +9,13 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Car, Users, BarChart3, LogOut, Home, Calendar, FileWarning } from "lucide-react";
+import { Car, Users, BarChart3, LogOut, Home, Calendar, FileWarning, MapPin } from "lucide-react";
 import {authAPI} from '@/services/api'
 import { toast } from "sonner";
 
 interface Props {
   activeView: string;
-  onChange: (view: "overview" | "vehicles" | "users" | "bookings" | "reports") => void;
+  onChange: (view: "overview" | "vehicles" | "users" | "bookings" | "reports" | "locations") => void;
 }
 
 const handleLogout = async () => {
@@ -75,6 +75,12 @@ const SidebarNav = ({ activeView, onChange }: Props) => (
               <SidebarMenuButton onClick={() => onChange("reports")} isActive={activeView === "reports"}>
                 <FileWarning className="w-4 h-4" />
                 <span>Damage Reports</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => onChange("locations")} isActive={activeView === "locations"}>
+                <MapPin className="w-4 h-4" />
+                <span>Locations</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>

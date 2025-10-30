@@ -69,10 +69,13 @@ export const authAPI = {
   
   confirmPasswordReset: (data: { uid: string; token: string; new_password: string; new_password2: string }) =>
     api.post('/user/password-reset-confirm/', data),
+  
+  verifyEmail: (data: { uid: string; token: string }) =>
+    api.post('/user/verify-email/', data),
 };
 
 export const vehiclesAPI = {
-  getAll: (params?: { search?: string; car_type?: string; transmission?: string; fuel_type?: string }) =>
+  getAll: (params?: { search?: string; car_type?: string; transmission?: string; fuel_type?: string; min_price?: string; max_price?: string }) =>
     api.get('/vehicles/', { params }),
 
   // Fetch by slug instead of numeric ID
@@ -135,6 +138,15 @@ export const damageReportAPI = {
 
 export const statsAPI = {
   getOverview: () => api.get('/admin/stats/overview/'),
+};
+
+export const locationsAPI = {
+  getAll: () => api.get('/locations/'),
+  create: (data: { name: string; address: string; city: string }) => 
+    api.post('/locations/new/', data),
+  update: (id: number, data: { name: string; address: string; city: string }) => 
+    api.put(`/locations/${id}/update/`, data),
+  delete: (id: number) => api.delete(`/locations/${id}/delete/`),
 };
 
 export default api;

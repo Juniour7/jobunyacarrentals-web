@@ -8,10 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, MapPin, Calendar, FileText, Loader2 } from "lucide-react";
-import { vehiclesAPI, bookingsAPI } from "@/services/api";
+import { vehiclesAPI, bookingsAPI, locationsAPI } from "@/services/api";
 import { Vehicle } from "@/types/vehicle";
 import { toast } from "sonner";
+
+interface Location {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+}
 
 const Booking = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -19,6 +27,7 @@ const Booking = () => {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [locations, setLocations] = useState<Location[]>([]);
   
   const [bookingData, setBookingData] = useState({
     startDate: "",
@@ -28,11 +37,12 @@ const Booking = () => {
   });
 
   useEffect(() => {
-    const fetchVehicle = async () => {
+    const fetchData = async () => {
       if (!slug) return;
       try {
-        const response = await vehiclesAPI.getBySlug(slug);
-        const v = response.data;
+        // Fetch vehicle
+        const vehicleResponse = await vehiclesAPI.getBySlug(slug);
+        const v = vehicleResponse.data;
         const mainImage = v.image.startsWith("http")
           ? v.image
           : `https://giftmacvane.pythonanywhere.com${v.image}`;
@@ -59,14 +69,18 @@ const Booking = () => {
           features: v.features ? v.features.split(",").map((f: string) => f.trim()) : [],
           status: v.status,
         });
+
+        // Fetch locations
+        const locationsResponse = await locationsAPI.getAll();
+        setLocations(locationsResponse.data);
       } catch (error) {
-        toast.error("Failed to load vehicle details");
+        toast.error("Failed to load data");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchVehicle();
+    fetchData();
   }, [slug]);
 
   const calculateTotal = () => {
@@ -207,27 +221,39 @@ const Booking = () => {
                         </CardTitle>
                         <div>
                           <Label htmlFor="pickupLocation">Pick-up Location</Label>
-                          <Input
-                            id="pickupLocation"
-                            type="text"
-                            placeholder="Enter pick-up address"
-                            value={bookingData.pickupLocation}
-                            onChange={(e) => setBookingData({ ...bookingData, pickupLocation: e.target.value })}
-                            required
-                            className="mt-2"
-                          />
+                          <Select 
+                            value={bookingData.pickupLocation} 
+                            onValueChange={(value) => setBookingData({ ...bookingData, pickupLocation: value })}
+                          >
+                            <SelectTrigger className="mt-2">
+                              <SelectValue placeholder="Select pick-up location" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {locations.map((location) => (
+                                <SelectItem key={location.id} value={location.id.toString()}>
+                                  {location.name} - {location.city}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div>
                           <Label htmlFor="dropoffLocation">Drop-off Location</Label>
-                          <Input
-                            id="dropoffLocation"
-                            type="text"
-                            placeholder="Enter drop-off address"
-                            value={bookingData.dropoffLocation}
-                            onChange={(e) => setBookingData({ ...bookingData, dropoffLocation: e.target.value })}
-                            required
-                            className="mt-2"
-                          />
+                          <Select 
+                            value={bookingData.dropoffLocation} 
+                            onValueChange={(value) => setBookingData({ ...bookingData, dropoffLocation: value })}
+                          >
+                            <SelectTrigger className="mt-2">
+                              <SelectValue placeholder="Select drop-off location" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {locations.map((location) => (
+                                <SelectItem key={location.id} value={location.id.toString()}>
+                                  {location.name} - {location.city}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 

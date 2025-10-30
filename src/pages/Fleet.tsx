@@ -17,6 +17,8 @@ const Fleet = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [transmissionFilter, setTransmissionFilter] = useState("ALL");
   const [fuelTypeFilter, setFuelTypeFilter] = useState("ALL");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   useEffect(() => {
     const fetchVehicles = async () => {
@@ -26,6 +28,8 @@ const Fleet = () => {
         if (selectedCategory !== "ALL") params.car_type = selectedCategory;
         if (transmissionFilter !== "ALL") params.transmission = transmissionFilter;
         if (fuelTypeFilter !== "ALL") params.fuel_type = fuelTypeFilter;
+        if (minPrice) params.min_price = minPrice;
+        if (maxPrice) params.max_price = maxPrice;
         
         const response = await vehiclesAPI.getAll(params);
         const apiVehicles = response.data.results.map((v: any) => ({
@@ -58,7 +62,7 @@ const Fleet = () => {
     };
 
     fetchVehicles();
-  }, [searchTerm, selectedCategory, transmissionFilter, fuelTypeFilter]);
+  }, [searchTerm, selectedCategory, transmissionFilter, fuelTypeFilter, minPrice, maxPrice]);
   
   const categories = ["ALL", "Sedan", "SUV", "Luxury", "Sports"];
   const transmissions = ["ALL", "Automatic", "Manual"];
@@ -81,8 +85,8 @@ const Fleet = () => {
           </div>
           
           {/* Search and Filter */}
-          <div className="flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 mb-12">
-            <div className="relative w-full md:w-[50%]">
+          <div className="space-y-4 mb-12">
+            <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
                 type="text"
@@ -93,9 +97,9 @@ const Fleet = () => {
               />
             </div>
             
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="">
+                <SelectTrigger>
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -106,7 +110,7 @@ const Fleet = () => {
               </Select>
               
               <Select value={transmissionFilter} onValueChange={setTransmissionFilter}>
-                <SelectTrigger className="">
+                <SelectTrigger>
                   <SelectValue placeholder="Transmission" />
                 </SelectTrigger>
                 <SelectContent>
@@ -117,7 +121,7 @@ const Fleet = () => {
               </Select>
               
               <Select value={fuelTypeFilter} onValueChange={setFuelTypeFilter}>
-                <SelectTrigger className="">
+                <SelectTrigger>
                   <SelectValue placeholder="Fuel Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,6 +130,20 @@ const Fleet = () => {
                   ))}
                 </SelectContent>
               </Select>
+
+              <Input
+                type="number"
+                placeholder="Min Price"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+              />
+
+              <Input
+                type="number"
+                placeholder="Max Price"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+              />
             </div>
           </div>
           
