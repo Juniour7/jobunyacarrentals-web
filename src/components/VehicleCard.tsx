@@ -72,7 +72,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         
         <Link to={`/vehicle/${vehicle.slug}`}>
           <Button variant="accent" className="w-full group" disabled={!vehicle.available}>
-            Explore
+            Reserve now
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </Link>

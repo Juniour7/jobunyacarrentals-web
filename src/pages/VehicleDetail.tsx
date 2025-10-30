@@ -130,8 +130,9 @@ const VehicleDetail = () => {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Loading...
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
+
     );
 
   if (!vehicle)
@@ -347,7 +348,7 @@ const VehicleDetail = () => {
                 <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
                   <Gauge className="w-5 h-5 text-accent" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Mileage</p>
+                    <p className="text-xs ext-muted-foreground">Mileage</p>
                     <p className="font-semibold">{vehicle.mileage}</p>
                   </div>
                 </div>
@@ -362,7 +363,7 @@ const VehicleDetail = () => {
                     className="w-full mb-4"
                     disabled={!vehicle.available}
                   >
-                    {vehicle.available ? "Book Now" : "Currently Booked"}
+                    {vehicle.available ? "Reserve Now & Pay Later" : "Currently Reserved"}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
@@ -406,7 +407,7 @@ const VehicleDetail = () => {
                       </div>
                     </div>
                     <Button type="submit" variant="accent" className="w-full" size="lg">
-                      Submit Booking Request
+                      Submit Reservation Request
                     </Button>
                   </form>
                 </DialogContent>
