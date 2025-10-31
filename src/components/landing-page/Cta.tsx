@@ -4,16 +4,26 @@ import { ArrowRight, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
 
+const image = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1920'
+
 const Cta = () => {
   return (
     <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1920" 
-            alt="Luxury car" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-accent/90" />
+          <video
+      className="w-full h-full object-cover"
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      poster="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1920"
+    >
+      <source src="/24385-342401489_small.mp4" type="video/mp4" />
+      {/* Optional fallback text */}
+      Your browser does not support the video tag.
+    </video>
+          <div className="absolute inset-0 " />
         </div>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
