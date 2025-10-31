@@ -36,7 +36,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/password-reset" element={<PasswordResetRequest />} />
           <Route path="/password-reset-confirm" element={<PasswordResetConfirm />} />
-          <Route path="/verify-email" element={<EmailVerification />} />
+          <Route path="/verify-email/:uid/:token" element={<EmailVerification />} />
           <Route path="/customer/dashboard" element={<ProtectedRoute role='customer'><CustomerDashboard /></ProtectedRoute>} />
           <Route path="/admin/dashboard" element={<ProtectedRoute role='admin'><AdminDashboard /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
