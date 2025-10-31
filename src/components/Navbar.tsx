@@ -112,7 +112,7 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Link to={dashboardLink} className="hidden md:block">
+            <Link to={dashboardLink} className="hidden md:block bg-white rounded-md">
               <Button variant="ghost" size="sm">{dashboardLabel}</Button>
             </Link>
             

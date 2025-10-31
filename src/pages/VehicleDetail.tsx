@@ -319,41 +319,7 @@ const VehicleDetail = () => {
                 <span className="text-muted-foreground ml-1">/day</span>
               </div>
 
-              {/* Quick Specs */}
-              {/* <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
-                  <Users className="w-5 h-5 text-accent" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Seats</p>
-                    <p className="font-semibold">{vehicle.seats} seater</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
-                  <Settings className="w-5 h-5 text-accent" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Transmission</p>
-                    <p className="font-semibold">{vehicle.transmission}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
-                  <Fuel className="w-5 h-5 text-accent" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Fuel Type</p>
-                    <p className="font-semibold">{vehicle.fuelType}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 p-3 bg-secondary rounded-lg">
-                  <Gauge className="w-5 h-5 text-accent" />
-                  <div>
-                    <p className="text-xs ext-muted-foreground">Mileage</p>
-                    <p className="font-semibold">{vehicle.mileage}</p>
-                  </div>
-                </div>
-              </div> */}
-
+              
               {/* Booking Button */}
               <Button
                 variant="accent"
