@@ -4,7 +4,6 @@ import { ArrowRight, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
 
-const image = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1920'
 
 const Cta = () => {
   return (
@@ -17,9 +16,9 @@ const Cta = () => {
       loop
       playsInline
       preload="auto"
-      poster="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1920"
+      poster="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1920"
     >
-      <source src="/24385-342401489_small.mp4" type="video/mp4" />
+      <source src="https://res.cloudinary.com/dxvzdn2ao/video/upload/v1761888817/24385-342401489_small_r4rsen.mp4" type="video/mp4" />
       {/* Optional fallback text */}
       Your browser does not support the video tag.
     </video>

@@ -95,7 +95,7 @@ const Index = () => {
       preload="auto"
       poster="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1920"
     >
-      <source src="/2229697-uhd_3840_2160_30fps.mp4" type="video/mp4" />
+      <source src="https://res.cloudinary.com/dxvzdn2ao/video/upload/v1761888707/2229697-uhd_3840_2160_30fps_q9t8mg.mp4" type="video/mp4" />
       {/* Optional fallback text */}
       Your browser does not support the video tag.
     </video>

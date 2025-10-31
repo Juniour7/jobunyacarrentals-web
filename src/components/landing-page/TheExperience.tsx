@@ -68,7 +68,7 @@ const TheExperience = () => {
                     loop
                     playsInline
                     preload="auto"
-                    src="/158316-816359649_small.mp4"
+                    src="https://res.cloudinary.com/dxvzdn2ao/video/upload/v1761888683/158316-816359649_small_muihlj.mp4"
                     className="w-full h-[30rem] object-cover rounded-md"
                     ></video>
                 </motion.div>
