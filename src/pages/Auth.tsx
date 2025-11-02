@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Car, Loader2 } from "lucide-react";
+import { Car, Loader2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI } from "@/services/api";
 
@@ -15,6 +15,8 @@ const Auth = () => {
   // Login form state
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loginLoading, setLoginLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Signup form state
   const [signupData, setSignupData] = useState({
@@ -161,16 +163,25 @@ const Auth = () => {
                       className="mt-2"
                     />
                   </div>
-                  <div>
+                  <div className="">
                     <Label htmlFor="login-password">Password</Label>
-                    <Input
+                    <div className="relative">
+                      <Input
                       id="login-password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={loginData.password}
                       onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                       required
-                      className="mt-2"
+                      className="mt-2 pr-10"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                    </div>
                   </div>
                   <Button type="submit" variant="accent" className="w-full" size="lg" disabled={loginLoading}>
                     {loginLoading ? (
@@ -247,33 +258,50 @@ const Auth = () => {
                       placeholder="DL123456"
                       value={signupData.licence}
                       onChange={(e) => setSignupData({ ...signupData, licence: e.target.value })}
-                      required
                       className="mt-2"
                     />
                   </div>
 
                   <div>
                     <Label htmlFor="signup-password">Password</Label>
-                    <Input
+                    <div className="relative">
+                      <Input
                       id="signup-password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={signupData.password}
                       onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                       required
                       className="mt-2"
-                    />
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
                   </div>
 
                   <div>
                     <Label htmlFor="signup-confirm">Confirm Password</Label>
-                    <Input
+                    <div className="relative">
+                      <Input
                       id="signup-confirm"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       value={signupData.confirmPassword}
                       onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
                       required
                       className="mt-2"
                     />
+                    <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Terms agreement checkbox */}
