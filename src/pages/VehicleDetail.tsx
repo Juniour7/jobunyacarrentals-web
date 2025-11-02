@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap, X, Check, CircleCheckBig, Rotate3D, Bolt, Circle } from "lucide-react";
+import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap, X, Check, CircleCheckBig, Rotate3D, Bolt, Circle, ArrowRight } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -342,6 +342,22 @@ const VehicleDetail = () => {
                 <VehicleCard key={v.id} vehicle={v} />
               ))}
             </div>
+            <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="text-center mt-8"
+          >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link to="/fleet">
+                <Button className="w-full md:w-auto" variant="accent" size="lg">
+                  View Full Fleet
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
           </div>
         </section>
       )}
