@@ -27,7 +27,7 @@ const ProfileView = ({ profile, passwordData, setPasswordData, onSubmit }: Profi
             <div className="space-y-4">
               <div>
                 <Label>Name</Label>
-                <Input value={profile.name || ""} disabled />
+                <Input value={profile.full_name || ""} disabled />
               </div>
               <div>
                 <Label>Email</Label>
