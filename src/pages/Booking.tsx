@@ -50,6 +50,8 @@ const Booking = () => {
         setVehicle({
           id: v.id.toString(),
           name: v.name,
+          model: v.model || "", 
+         color: v.color || "",
           slug: v.slug,
           category: v.car_type,
           description: v.description,
@@ -62,8 +64,8 @@ const Booking = () => {
           mileage: "Unlimited",
           min_days: v.min_days ?? 1,
           engine: v.engine,
-          enginePower: "N/A",
-          engineTorque: v.engine_torque || "N/A",
+          engine_power: v.engine_power,
+          engine_torque: v.engine_torque,
           fuelEconomy: { city: "N/A", highway: "N/A" },
           available: v.status === "Available",
           features: v.features ? v.features.split(",").map((f: string) => f.trim()) : [],
@@ -121,6 +123,8 @@ const Booking = () => {
         vehicle: parseInt(vehicle.id),
         start_date: bookingData.startDate,
         end_date: bookingData.endDate,
+        pickup_location: parseInt(bookingData.pickupLocation),   // snake_case for backend
+        dropoff_location: parseInt(bookingData.dropoffLocation),
       });
       toast.success("Booking reservation successful! We'll contact you shortly.");
       navigate("/customer/dashboard");
@@ -319,7 +323,7 @@ const Booking = () => {
                         variant="accent" 
                         size="lg" 
                         className="w-full mt-6"
-                        disabled={submitting || !vehicle.available}
+                        disabled={submitting || !vehicle.available || !bookingData.pickupLocation || !bookingData.dropoffLocation}
                       >
                         {submitting ? (
                           <>

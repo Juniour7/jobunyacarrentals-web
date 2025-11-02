@@ -106,7 +106,7 @@ export const bookingsAPI = {
   getMyBookings: () => api.get('/my-bookings/'),
   getAllBookings: () => api.get('/all-bookings/'),
   updateStatus: (id: number, status: string) => 
-    api.patch(`/bookings/${id}/status/`, { status }),
+    api.put(`/bookings/${id}/status/`, { status }),
   delete: (id:number) => 
     api.delete(`/bookings/${id}/delete/`),
 };
