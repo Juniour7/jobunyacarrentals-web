@@ -4,7 +4,13 @@ import VehicleCard from "@/components/VehicleCard";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { vehiclesAPI } from "@/services/api";
 import { toast } from "sonner";
@@ -23,14 +29,14 @@ const Fleet = () => {
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const params: any = {};
+        const params: any = { page_size: 1000 }; // ✅ fetch all vehicles
         if (searchTerm) params.search = searchTerm;
         if (selectedCategory !== "ALL") params.car_type = selectedCategory;
         if (transmissionFilter !== "ALL") params.transmission = transmissionFilter;
         if (fuelTypeFilter !== "ALL") params.fuel_type = fuelTypeFilter;
         if (minPrice) params.min_price = minPrice;
         if (maxPrice) params.max_price = maxPrice;
-        
+
         const response = await vehiclesAPI.getAll(params);
         const apiVehicles = response.data.results.map((v: any) => ({
           id: v.id.toString(),
@@ -47,11 +53,10 @@ const Fleet = () => {
           mileage: "Unlimited",
           minimumHirePeriod: "1 day",
           engine: v.model,
-          enginePower: "N/A",
-          engineTorque: "N/A",
-          fuelEconomy: { city: "N/A", highway: "N/A" },
           available: v.status === "Available",
-          features: v.features ? v.features.split(',').map((f: string) => f.trim()) : []
+          features: v.features
+            ? v.features.split(",").map((f: string) => f.trim())
+            : [],
         }));
         setVehicles(apiVehicles);
       } catch (error) {
@@ -63,15 +68,40 @@ const Fleet = () => {
 
     fetchVehicles();
   }, [searchTerm, selectedCategory, transmissionFilter, fuelTypeFilter, minPrice, maxPrice]);
-  
-  const categories = ["ALL", "Sedan", "SUV", "Luxury", "Sports"];
+
+  // Group vehicles by category
+  const groupedVehicles = vehicles.reduce((acc: Record<string, Vehicle[]>, v) => {
+    if (!acc[v.category]) acc[v.category] = [];
+    acc[v.category].push(v);
+    return acc;
+  }, {});
+
+  // Define consistent order for display
+  const categoryOrder = [
+    "Small Car",
+    "Medium Car",
+    "Mid-Size Car",
+    "SUV Car",
+    "Luxury Car",
+    "Luxury SUV",
+    "Minivan",
+    "Passenger Van",
+    "Bus",
+    "Safari Vehicle",
+  ];
+
+  const sortedGroups = Object.entries(groupedVehicles).sort(
+    ([a], [b]) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b)
+  );
+
+  const categories = ["ALL", ...categoryOrder];
   const transmissions = ["ALL", "Automatic", "Manual"];
-  const fuelTypes = ["ALL", "Petrol", "Diesel"];
+  const fuelTypes = ["ALL", "Petrol", "Diesel", "Hybrid", "Electric"];
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      
+
       <section className="pt-32 pb-20">
         <div className="container mx-auto">
           <div className="text-center mb-12">
@@ -79,12 +109,12 @@ const Fleet = () => {
               Our Fleet
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore our curated collection of premium vehicles, each meticulously maintained 
+              Explore our curated collection of premium vehicles, each meticulously maintained
               to ensure the highest standards of luxury and performance.
             </p>
           </div>
-          
-          {/* Search and Filter */}
+
+          {/* Search and Filters */}
           <div className="space-y-4 mb-12">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
@@ -96,7 +126,7 @@ const Fleet = () => {
                 className="pl-10 w-full"
               />
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
@@ -104,29 +134,35 @@ const Fleet = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={transmissionFilter} onValueChange={setTransmissionFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder="Transmission" />
                 </SelectTrigger>
                 <SelectContent>
                   {transmissions.map((trans) => (
-                    <SelectItem key={trans} value={trans}>{trans}</SelectItem>
+                    <SelectItem key={trans} value={trans}>
+                      {trans}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={fuelTypeFilter} onValueChange={setFuelTypeFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder="Fuel Type" />
                 </SelectTrigger>
                 <SelectContent>
                   {fuelTypes.map((fuel) => (
-                    <SelectItem key={fuel} value={fuel}>{fuel}</SelectItem>
+                    <SelectItem key={fuel} value={fuel}>
+                      {fuel}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -146,24 +182,31 @@ const Fleet = () => {
               />
             </div>
           </div>
-          
-          {/* Vehicle Grid */}
+
+          {/* Vehicle Groups */}
           {loading ? (
             <div className="min-h-screen flex items-center justify-center">
               <div className="w-12 h-12 border-4 border-gray-300 border-t-accent rounded-full animate-spin"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {vehicles.map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
-              ))}
-            </div>
-          )}
-          
-          {!loading && vehicles.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No vehicles found matching your criteria.</p>
-            </div>
+            sortedGroups.length > 0 ? (
+              sortedGroups.map(([category, cars]) => (
+                <div key={category} className="mb-16">
+                  <h2 className="text-3xl font-bold mb-6 border-b pb-2">{category}</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {cars.map((vehicle) => (
+                      <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">
+                  No vehicles found matching your criteria.
+                </p>
+              </div>
+            )
           )}
         </div>
       </section>

@@ -52,8 +52,8 @@ const VehicleDetail = () => {
           mileage: "Unlimited",
           min_days: v.min_days ?? 1,
           engine: v.engine,
-          enginePower: "N/A",
-          engineTorque: v.engine_torque || "N/A",
+          engine_power: v.engine_power,
+          engine_torque: v.engine_torque || "N/A",
           fuelEconomy: { city: "N/A", highway: "N/A" },
           available: v.status === "Available",
           features: v.features ? v.features.split(",").map((f: string) => f.trim()) : [],
@@ -82,8 +82,8 @@ const VehicleDetail = () => {
             mileage: "Unlimited",
             min_days: sv.min_days ?? 1,
             engine: sv.engine,
-            enginePower: "N/A",
-            engineTorque: "N/A",
+            engine_power: sv.engine_power,
+            engine_torque: sv.engine_torque,
             fuelEconomy: { city: "N/A", highway: "N/A" },
             available: sv.status === "Available",
             features: sv.features ? sv.features.split(",").map((f: string) => f.trim()) : [],
@@ -286,11 +286,11 @@ const VehicleDetail = () => {
     </div>
     <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
       <span className="text-muted-foreground">Engine Power</span>
-      <span className="font-medium">{vehicle.enginePower}</span>
+      <span className="font-medium">{vehicle.engine_power}</span>
     </div>
     <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
       <span className="text-muted-foreground">Engine Torque</span>
-      <span className="font-medium">{vehicle.engineTorque}</span>
+      <span className="font-medium">{vehicle.engine_torque}</span>
     </div>
     <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
       <span className="text-muted-foreground">Fuel Economy</span>

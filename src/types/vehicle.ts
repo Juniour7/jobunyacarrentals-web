@@ -17,8 +17,8 @@ export interface Vehicle {
   mileage: string;
   min_days: number | null;
   engine: string;
-  enginePower: string;
-  engineTorque: string;
+  engine_power: string;
+  engine_torque: string;
   fuelEconomy: {
     city: string;
     highway: string;
