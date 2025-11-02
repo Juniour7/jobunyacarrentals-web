@@ -1,10 +1,7 @@
 import { useState } from "react";
 import {
   Card,
-  CardHeader,
   CardContent,
-  CardDescription,
-  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Trash2 } from "lucide-react";
+import { Calendar, MapPin, Clock, Info, MessageCircle, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Booking } from "@/types/vehicle";
 
@@ -65,58 +62,166 @@ const BookingsView = ({ bookings, loading, onDelete }: Props) => {
       </Card>
     );
 
+  const calculateDuration = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    return days;
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+  };
+
   return (
     <>
       {/* Bookings Grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {bookings.map((booking) => (
-          <Card key={booking.id} className="flex flex-col justify-between">
-            <CardHeader className="flex justify-between items-start">
-              <div className="flex items-start gap-4">
-                <img
-                  src={getFullImageUrl(booking.vehicle_image)}
-                  alt={booking.vehicle_name}
-                  className="w-24 h-24 object-contain rounded-lg"
-                />
-                <div>
-                  <CardTitle className="font-heading text-lg">
-                    {booking.vehicle_name}
-                  </CardTitle>
-                  <CardDescription className="mt-1">
-                    {new Date(booking.start_date).toLocaleDateString()} –{" "}
-                    {new Date(booking.end_date).toLocaleDateString()}
-                  </CardDescription>
+      <div className="grid gap-6 lg:grid-cols-1">
+        {bookings.map((booking) => {
+          const duration = calculateDuration(booking.start_date, booking.end_date);
+          const dailyRate = parseFloat(booking.total_price) / duration;
+          
+          return (
+            <Card key={booking.id} className="overflow-hidden">
+              <CardContent className="p-6">
+                {/* Header with Ref and Status */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Info className="w-4 h-4" />
+                    <span>Ref: {booking.id.toString().padStart(8, '0')}</span>
+                  </div>
+                  <Badge
+                    variant={booking.status === "active" ? "default" : "secondary"}
+                    className="capitalize"
+                  >
+                    {booking.status}
+                  </Badge>
                 </div>
-              </div>
-            </CardHeader>
 
-            <CardContent className="flex justify-between items-center mt-auto">
-              <div className="flex flex-col gap-1 text-sm">
-                <span className="text-muted-foreground">Total Cost:</span>
-                <span className="font-bold text-accent">
-                  KES {parseFloat(booking.total_price).toLocaleString()}
-                </span>
-              </div>
-              <div className="flex flex-col gap-2 items-end">
-                <Badge
-                  variant={
-                    booking.status === "active" ? "default" : "secondary"
-                  }
-                >
-                  {booking.status}
-                </Badge>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => handleDeleteClick(booking)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="grid md:grid-cols-[200px,1fr] gap-6">
+                  {/* Vehicle Image */}
+                  <div className="flex items-start">
+                    <img
+                      src={getFullImageUrl(booking.vehicle_image)}
+                      alt={booking.vehicle_name}
+                      className="w-full h-auto object-contain rounded-lg"
+                    />
+                  </div>
+
+                  {/* Booking Details */}
+                  <div className="space-y-4">
+                    {/* Title and Price */}
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-xl font-heading font-semibold mb-1">
+                          {booking.vehicle_name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Self-drive • Automatic
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-semibold">
+                          KSh {dailyRate.toLocaleString()}/day
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Total: KSh {parseFloat(booking.total_price).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Booking Period and Vehicle Details */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <Calendar className="w-4 h-4" />
+                          <span>Booking Period</span>
+                        </div>
+                        <div className="pl-6 text-sm">
+                          <p>{formatDate(booking.start_date)} - {formatDate(booking.end_date)}</p>
+                          <p className="text-muted-foreground">Duration: {duration} {duration === 1 ? 'day' : 'days'}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <Info className="w-4 h-4" />
+                          <span>Vehicle Details</span>
+                        </div>
+                        <div className="pl-6 text-sm">
+                          <p>Self-drive</p>
+                          <p className="text-muted-foreground">Usage: Within Nairobi</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Pickup and Drop-off */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <MapPin className="w-4 h-4" />
+                          <span>Pickup</span>
+                        </div>
+                        <div className="pl-6 text-sm">
+                          <p>Elite Motion Office</p>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Clock className="w-3 h-3" />
+                            <span>Time: 09:30:00</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <MapPin className="w-4 h-4" />
+                          <span>Drop-off</span>
+                        </div>
+                        <div className="pl-6 text-sm">
+                          <p>Elite Motion Office</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Booked Date */}
+                    <p className="text-xs text-muted-foreground">
+                      Booked {formatDate(booking.start_date)}
+                    </p>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3 pt-2">
+                      <Button variant="outline" className="flex-1" asChild>
+                        <a 
+                          href="https://wa.me/254700000000" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          Contact
+                        </a>
+                      </Button>
+                      <Button variant="default" className="flex-1">
+                        View Details
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => handleDeleteClick(booking)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Delete Confirmation Modal */}
