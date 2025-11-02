@@ -2,6 +2,8 @@ export interface Vehicle {
   id: string;
   slug: string;
   name: string;
+  model: string;
+  color: string;
   category: string;
   pricePerDay: number;
   rating: number;

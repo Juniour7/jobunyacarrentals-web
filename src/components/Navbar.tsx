@@ -142,7 +142,7 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
                       "text-lg font-medium transition-colors py-2",
-                      isActive('/contact') ? 'text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'
+                      isActive('/contact') ? 'text-accent font-semibold' : 'text-muted-foreground hover:text-foreground'
                     )}
                   >
                     Contact

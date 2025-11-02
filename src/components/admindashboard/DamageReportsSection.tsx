@@ -54,7 +54,9 @@ const DamageReportsSection = () => {
   return (
     <div className="space-y-6">
       {loading ? (
-        <p>Loading damage reports...</p>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-gray-300 border-t-accent rounded-full animate-spin"></div>
+        </div>
       ) : reports.length === 0 ? (
         <Card>
           <CardContent className="p-12 text-center">

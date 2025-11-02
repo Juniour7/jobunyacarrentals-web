@@ -48,7 +48,9 @@ const AdminBookingsSection = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-12">Loading bookings...</div>;
+    return <div className="min-h-screen flex items-center justify-center">
+              <div className="w-12 h-12 border-4 border-gray-300 border-t-accent rounded-full animate-spin"></div>
+            </div>;
   }
 
   return (

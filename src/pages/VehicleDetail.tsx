@@ -37,6 +37,8 @@ const VehicleDetail = () => {
         setVehicle({
           id: v.id.toString(),
           name: v.name,
+          model: v.model,
+          color: v.color,
           status: v.status,
           slug: v.slug,
           category: v.car_type,
