@@ -123,9 +123,9 @@ const Booking = () => {
         vehicle: parseInt(vehicle.id),
         start_date: bookingData.startDate,
         end_date: bookingData.endDate,
-        pickup_location: parseInt(bookingData.pickupLocation),   // snake_case for backend
+        pickup_location: parseInt(bookingData.pickupLocation),
         dropoff_location: parseInt(bookingData.dropoffLocation),
-      });
+      } as any);
       toast.success("Booking reservation successful! We'll contact you shortly.");
       navigate("/customer/dashboard");
     } catch (error: any) {

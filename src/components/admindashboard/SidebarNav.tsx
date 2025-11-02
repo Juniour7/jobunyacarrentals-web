@@ -91,12 +91,6 @@ const SidebarNav = ({ activeView, onChange }: Props) => (
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton onClick={handleLogout}>
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>

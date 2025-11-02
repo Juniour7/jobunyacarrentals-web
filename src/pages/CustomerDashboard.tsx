@@ -93,13 +93,16 @@ const CustomerDashboard = () => {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
-        <SidebarNav activeView={activeView} setActiveView={setActiveView} onLogout={handleLogout} />
+        <SidebarNav activeView={activeView} setActiveView={setActiveView} />
         <main className="flex-1">
-          <DashboardHeader title={
-            activeView === "bookings" ? "My Bookings"
-              : activeView === "reports" ? "Damage Reports"
-              : "My Profile"
-          } />
+          <DashboardHeader 
+            title={
+              activeView === "bookings" ? "My Bookings"
+                : activeView === "reports" ? "Damage Reports"
+                : "My Profile"
+            }
+            onLogout={handleLogout}
+          />
           <div className="p-6">
             {activeView === "bookings" && (
               <BookingsView bookings={bookings} loading={loading} onDelete={handleDeleteBooking} />

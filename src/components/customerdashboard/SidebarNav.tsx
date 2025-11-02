@@ -3,15 +3,14 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel,
   SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton
 } from "@/components/ui/sidebar";
-import { Car, Calendar, FileWarning, Home, LogOut, User } from "lucide-react";
+import { Car, Calendar, FileWarning, Home, User, MessageCircle } from "lucide-react";
 
 interface SidebarNavProps {
   activeView: string;
   setActiveView: (v: any) => void;
-  onLogout: () => void;
 }
 
-const SidebarNav = ({ activeView, setActiveView, onLogout }: SidebarNavProps) => (
+const SidebarNav = ({ activeView, setActiveView }: SidebarNavProps) => (
   <Sidebar className="border-r">
     <div className="p-6 border-b">
       <Link to="/" className="flex items-center gap-2">
@@ -51,9 +50,11 @@ const SidebarNav = ({ activeView, setActiveView, onLogout }: SidebarNavProps) =>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={onLogout}>
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
+              <SidebarMenuButton asChild>
+                <a href="https://wa.me/254700000000" target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="w-4 h-4" />
+                  <span>WhatsApp Support</span>
+                </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

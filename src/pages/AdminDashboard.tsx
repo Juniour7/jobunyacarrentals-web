@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import SidebarNav from "@/components/admindashboard/SidebarNav";
-import { Menu } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { authAPI } from "@/services/api";
+import { toast } from "sonner";
 import OverviewSection from "@/components/admindashboard/OverviewSection";
 import VehiclesSection from "@/components/admindashboard/VehiclesSection";
 import UserSection from "@/components/admindashboard/UsersSection";
@@ -11,6 +14,17 @@ import LocationsSection from "@/components/admindashboard/LocationsSection";
 
 const AdminDashboard = () => {
   const [activeView, setActiveView] = useState<'overview' | 'vehicles' | 'users' | 'bookings' | 'reports' | 'locations'>('overview');
+
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+      localStorage.clear();
+      window.location.href = "/";
+      toast.success("Logged out successfully!");
+    } catch {
+      toast.error("Failed to logout");
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -37,6 +51,10 @@ const AdminDashboard = () => {
                     : 'Bookings Management'}
                 </h1>
               </div>
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </header>
 
