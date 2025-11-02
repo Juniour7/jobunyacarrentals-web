@@ -5,6 +5,8 @@ export const vehicles: Vehicle[] = [
     id: "1",
     slug: "mercedes-benz-g-class",
     name: "Mercedes-Benz G-Class",
+    model: "G-Class",
+    color: "Black",
     category: "LUXURY",
     pricePerDay: 45000,
     rating: 5.0,
@@ -17,8 +19,8 @@ export const vehicles: Vehicle[] = [
     mileage: "Unlimited",
     min_days: 2,
     engine: "4.0L V8",
-    enginePower: "577 HP",
-    engineTorque: "850 Nm",
+    engine_power: "577 HP",
+    engine_torque: "850 Nm",
     fuelEconomy: {
       city: "13 km/L",
       highway: "18 km/L"
@@ -30,6 +32,8 @@ export const vehicles: Vehicle[] = [
     id: "2",
     slug: "range-rover-vogue",
     name: "Range Rover Vogue",
+    model: "Vogue",
+    color: "White",
     category: "LUXURY",
     pricePerDay: 45000,
     rating: 5.0,
@@ -42,8 +46,8 @@ export const vehicles: Vehicle[] = [
     mileage: "Unlimited",
     min_days: 2,
     engine: "3.0L V6",
-    enginePower: "350 HP",
-    engineTorque: "700 Nm",
+    engine_power: "350 HP",
+    engine_torque: "700 Nm",
     fuelEconomy: {
       city: "11 km/L",
       highway: "15 km/L"
@@ -55,6 +59,8 @@ export const vehicles: Vehicle[] = [
     id: "3",
     slug: "lexus-lx-570",
     name: "Lexus LX-570",
+    model: "LX-570",
+    color: "Silver",
     category: "LUXURY",
     pricePerDay: 40000,
     rating: 5.0,
@@ -67,8 +73,8 @@ export const vehicles: Vehicle[] = [
     mileage: "Unlimited",
     min_days: 2,
     engine: "5.7L V8",
-    enginePower: "367 HP",
-    engineTorque: "530 Nm",
+    engine_power: "367 HP",
+    engine_torque: "530 Nm",
     fuelEconomy: {
       city: "10 km/L",
       highway: "14 km/L"
@@ -80,6 +86,8 @@ export const vehicles: Vehicle[] = [
     id: "4",
     slug: "bmw-7-series",
     name: "BMW 7 Series",
+    model: "7 Series",
+    color: "Blue",
     category: "EXECUTIVE",
     pricePerDay: 35000,
     rating: 4.9,
@@ -92,8 +100,8 @@ export const vehicles: Vehicle[] = [
     mileage: "Unlimited",
     min_days: 1,
     engine: "3.0L I6",
-    enginePower: "335 HP",
-    engineTorque: "450 Nm",
+    engine_power: "335 HP",
+    engine_torque: "450 Nm",
     fuelEconomy: {
       city: "12 km/L",
       highway: "17 km/L"
@@ -105,6 +113,8 @@ export const vehicles: Vehicle[] = [
     id: "5",
     slug: "audi-q8",
     name: "Audi Q8",
+    model: "Q8",
+    color: "Gray",
     category: "LUXURY",
     pricePerDay: 38000,
     rating: 4.8,
@@ -117,8 +127,8 @@ export const vehicles: Vehicle[] = [
     mileage: "Unlimited",
     min_days: 1,
     engine: "3.0L V6",
-    enginePower: "335 HP",
-    engineTorque: "500 Nm",
+    engine_power: "335 HP",
+    engine_torque: "500 Nm",
     fuelEconomy: {
       city: "11.5 km/L",
       highway: "16 km/L"
@@ -130,6 +140,8 @@ export const vehicles: Vehicle[] = [
     id: "6",
     slug: "porsche-cayenne",
     name: "Porsche Cayenne",
+    model: "Cayenne",
+    color: "Red",
     category: "SPORT",
     pricePerDay: 42000,
     rating: 5.0,
@@ -142,8 +154,8 @@ export const vehicles: Vehicle[] = [
     mileage: "Unlimited",
     min_days: 2,
     engine: "3.0L V6",
-    enginePower: "340 HP",
-    engineTorque: "450 Nm",
+    engine_power: "340 HP",
+    engine_torque: "450 Nm",
     fuelEconomy: {
       city: "10.5 km/L",
       highway: "14.5 km/L"
