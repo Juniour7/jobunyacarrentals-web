@@ -88,7 +88,7 @@ const VehiclesSection = () => {
   // Multiple additional images
   if (additionalImages) {
     Array.from(additionalImages).forEach((file) => {
-      formData.append("images[]", file);
+      formData.append("images", file);
     });
   }
 
@@ -226,11 +226,16 @@ const VehiclesSection = () => {
           <SelectValue placeholder="Select type" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Sedan">Sedan</SelectItem>
-          <SelectItem value="SUV">SUV</SelectItem>
-          <SelectItem value="Sports">Sports</SelectItem>
-          <SelectItem value="Luxury">Luxury</SelectItem>
-          <SelectItem value="Van">Van</SelectItem>
+          <SelectItem value="Small Car">Small Car</SelectItem>
+          <SelectItem value="Medium Car">Medium Car</SelectItem>
+          <SelectItem value="Mid-Size Car">Mid-Size Car</SelectItem>
+          <SelectItem value="SUV Car">SUV Car</SelectItem>
+          <SelectItem value="Luxury Car">Luxury Car</SelectItem>
+          <SelectItem value="Luxury SUV">Luxury SUV</SelectItem>
+          <SelectItem value="Minivan">Minivan</SelectItem>
+          <SelectItem value="Passenger Van">Passenger Van</SelectItem>
+          <SelectItem value="Bus">Bus</SelectItem>
+          <SelectItem value="Safari Vehicle">Safari Vehicle</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -383,15 +388,30 @@ const VehiclesSection = () => {
   </div>
 
   <div>
-    <Label htmlFor="image">Main Vehicle Image</Label>
-    <Input
-      id="image"
-      type="file"
-      accept="image/*"
-      onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-      required={!editingVehicle}
-    />
-  </div>
+  <Label htmlFor="image">Main Vehicle Image</Label>
+  <Input
+    id="image"
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files?.[0] || null;
+      setImageFile(file);
+    }}
+    required={!editingVehicle}
+  />
+
+  {/* ✅ Preview of uploaded image */}
+  {imageFile && (
+    <div className="mt-2">
+      <img
+        src={URL.createObjectURL(imageFile)}
+        alt="Vehicle Preview"
+        className="w-full max-h-64 object-cover rounded-md border"
+      />
+    </div>
+  )}
+</div>
+
 
   <div>
     <Label htmlFor="additional-images">Additional Images (optional)</Label>
@@ -400,8 +420,47 @@ const VehiclesSection = () => {
       type="file"
       accept="image/*"
       multiple
-      onChange={(e) => setAdditionalImages(e.target.files)}
+      onChange={(e) => {
+  if (!e.target.files) return;
+  const newFiles = Array.from(e.target.files);
+  setAdditionalImages((prev) => {
+    if (!prev) return e.target.files;
+    const merged = [...Array.from(prev), ...newFiles];
+
+    // Convert back to FileList-like structure (FormData accepts arrays)
+    const dataTransfer = new DataTransfer();
+    merged.forEach((file) => dataTransfer.items.add(file));
+    return dataTransfer.files;
+  });
+}}
     />
+    {additionalImages && Array.from(additionalImages).length > 0 && (
+  <div className="mt-2 grid grid-cols-3 gap-2">
+    {Array.from(additionalImages).map((file, idx) => (
+      <div key={idx} className="relative">
+        <img
+          src={URL.createObjectURL(file)}
+          alt={file.name}
+          className="w-full h-24 object-cover rounded-md border"
+        />
+        <button
+          type="button"
+          onClick={() => {
+            const files = Array.from(additionalImages);
+            files.splice(idx, 1);
+            const dataTransfer = new DataTransfer();
+            files.forEach((f) => dataTransfer.items.add(f));
+            setAdditionalImages(dataTransfer.files);
+          }}
+          className="absolute top-1 right-1 bg-black/50 text-white rounded-full px-1 text-xs"
+        >
+          ✕
+        </button>
+      </div>
+    ))}
+  </div>
+)}
+
     <p className="text-xs text-muted-foreground mt-1">You can upload multiple images</p>
   </div>
 
