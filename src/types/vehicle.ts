@@ -35,6 +35,13 @@ export interface UserInfo {
   license_number: string;
 }
 
+export interface LocationDetail {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+}
+
 export interface Booking {
   id: number;
   user: number;
@@ -48,6 +55,10 @@ export interface Booking {
   status: 'pending' | 'active' | 'completed' | 'cancelled';
   daily_rate: string;
   created_at: string;
+  pickup_location: number;
+  dropoff_location: number;
+  pickup_location_detail: LocationDetail;
+  dropoff_location_detail: LocationDetail;
 }
 
 export interface DamageReport {

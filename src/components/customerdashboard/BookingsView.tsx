@@ -166,12 +166,10 @@ const BookingsView = ({ bookings, loading, onDelete }: Props) => {
                           <MapPin className="w-4 h-4" />
                           <span>Pickup</span>
                         </div>
-                        <div className="pl-6 text-sm">
-                          <p>Elite Motion Office</p>
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Clock className="w-3 h-3" />
-                            <span>Time: 09:30:00</span>
-                          </div>
+                        <div className="pl-6 text-sm text-muted-foreground">
+                          <p>{booking.pickup_location_detail.address}</p>
+                          <p>{booking.pickup_location_detail.name}</p>
+                          <p>{booking.pickup_location_detail.city}</p>
                         </div>
                       </div>
 
@@ -180,8 +178,10 @@ const BookingsView = ({ bookings, loading, onDelete }: Props) => {
                           <MapPin className="w-4 h-4" />
                           <span>Drop-off</span>
                         </div>
-                        <div className="pl-6 text-sm">
-                          <p>Elite Motion Office</p>
+                        <div className="pl-6 text-sm text-muted-foreground">
+                          <p>{booking.dropoff_location_detail.address}</p>
+                          <p>{booking.dropoff_location_detail.name}</p>
+                          <p>{booking.dropoff_location_detail.city}</p>
                         </div>
                       </div>
                     </div>
@@ -193,20 +193,37 @@ const BookingsView = ({ bookings, loading, onDelete }: Props) => {
 
                     {/* Action Buttons */}
                     <div className="flex gap-3 pt-2">
-                      <Button variant="outline" className="flex-1" asChild>
-                        <a 
-                          href="https://wa.me/254700000000" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2"
+                        <Button
+                            variant="outline"
+                            className="flex-1 border-[#22c55e] text-[#22c55e] hover:bg-[#22c55e]"
+                            asChild
                         >
-                          <MessageCircle className="w-4 h-4" />
-                          Contact
-                        </a>
-                      </Button>
-                      <Button variant="default" className="flex-1">
-                        View Details
-                      </Button>
+                            <a
+                                href={`https://wa.me/254723565952?text=${encodeURIComponent(
+                                `Hello Jobunya Car Rentals, I need assistance with my booking
+
+                                Booking Details:
+                                - Name: ${booking.user_info.full_name}
+                                - Email: ${booking.user_info.email}
+                                - Phone: ${booking.user_info.phone_number}
+                                - Vehicle: ${booking.vehicle_name}
+                                - Pickup: ${booking.pickup_location_detail.name}, ${booking.pickup_location_detail.city}
+                                - Drop-off: ${booking.dropoff_location_detail.name}, ${booking.dropoff_location_detail.city}
+                                - Dates: ${formatDate(booking.start_date)} to ${formatDate(booking.end_date)}
+                                - Total: KSh ${booking.total_price}
+                                Thank you for your assistance
+                                `
+                                )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2"
+                            >
+                            <MessageCircle className="w-4 h-4" />
+                                Contact
+                            </a>
+                        </Button>
+
+
                       <Button
                         type="button"
                         variant="destructive"
