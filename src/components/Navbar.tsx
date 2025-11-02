@@ -60,19 +60,11 @@ const Navbar = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center space-x-2">
-            <div className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center transition-colors",
-              scrolled || !isHomePage ? "bg-foreground" : "bg-background"
-            )}>
-              <Car className={cn(
-                "w-7 h-7 transition-colors",
-                scrolled || !isHomePage ? "text-background" : "text-foreground"
-              )} />
-            </div>
-            <span className={cn(
-              "font-heading text-xl font-semibold transition-colors",
-              scrolled || !isHomePage ? "text-foreground" : "text-background"
-            )}>Jobunya Cars</span>
+            <img 
+              src="/logo.png" 
+              alt="" 
+              className="w-[5rem] md:w-[7rem]"
+            />
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">

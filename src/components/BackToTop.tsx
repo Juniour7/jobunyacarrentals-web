@@ -32,7 +32,7 @@ const BackToTop = () => {
           onClick={handleClick}
           className="
           fixed bottom-6 right-6 
-          bg-[#07b6d5] hover:bg-blue-700 
+          bg-accent hover:scale-90 
           text-white p-3 rounded-full 
           shadow-lg transition-all duration-300
           flex items-center justify-center z-50

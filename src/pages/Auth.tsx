@@ -127,10 +127,11 @@ const Auth = () => {
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center space-x-2 mb-8">
-          <div className="w-12 h-12 bg-foreground rounded-full flex items-center justify-center">
-            <Car className="w-7 h-7 text-background" />
-          </div>
-          <span className="font-heading text-2xl font-semibold">Jobunya Cars</span>
+          <img 
+              src="/jobunya.png" 
+              alt="" 
+              className="w-[7rem] md:w-[10rem]"
+            />
         </Link>
 
         <Tabs defaultValue="login" className="w-full">

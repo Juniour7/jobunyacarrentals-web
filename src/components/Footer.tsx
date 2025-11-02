@@ -8,10 +8,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
-                <Car className="w-6 h-6 text-foreground" />
-              </div>
-              <span className="font-heading text-xl font-semibold">Car Rentals</span>
+              <img 
+              src="/logo.png" 
+              alt="" 
+              className="w-[5rem] md:w-[7rem]"
+            />
             </div>
             <p className="text-sm text-background/70">
               Premium self-drive and chauffeured car rentals for discerning clients who demand excellence.

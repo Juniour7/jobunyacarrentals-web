@@ -26,7 +26,7 @@ All colors MUST be HSL.
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: 226 77% 68%;
+    --accent: 240 100% 32%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -38,7 +38,7 @@ All colors MUST be HSL.
 
     --radius: 0.375rem;
 
-    --sidebar-background: 226 77% 68%;
+    --sidebar-background: 240 100% 32%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 0 0% 100%;
     --sidebar-primary-foreground: 226 77% 68%;
