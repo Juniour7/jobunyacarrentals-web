@@ -81,7 +81,7 @@ const Footer = () => {
         
         <div className="border-t border-background/20 mt-8 pt-8 text-center">
           <p className="text-sm text-background/70">
-            © 2025 Car Rental Car Hire. All rights reserved.
+            © 2025 Jobunya Car Rentals. All rights reserved.
           </p>
         </div>
       </div>

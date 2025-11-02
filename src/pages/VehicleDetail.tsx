@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap, X, Check, CircleCheckBig } from "lucide-react";
+import { Star, ArrowLeft, Calendar, Users, Gauge, Fuel, Settings, Zap, X, Check, CircleCheckBig, Rotate3D, Bolt, Circle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -82,7 +82,7 @@ const VehicleDetail = () => {
             mileage: "Unlimited",
             min_days: sv.min_days ?? 1,
             engine: sv.engine,
-            engine_power: sv.engine_power,
+            engine_power: sv.engine_powerx,
             engine_torque: sv.engine_torque,
             fuelEconomy: { city: "N/A", highway: "N/A" },
             available: sv.status === "Available",
@@ -259,58 +259,53 @@ const VehicleDetail = () => {
 
               <div className="mb-8">
   <h2 className="font-heading text-xl font-semibold mb-4">{vehicle.name} Details</h2>
-  <div className="border border-muted rounded-lg overflow-hidden text-sm">
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Seats</span>
-      <span className="font-medium">{vehicle.seats} seater</span>
+  <div className="space-y-6">
+    <div>
+      <h3 className="text-lg font-semibold border-b border-muted pb-2 mb-3">Performance</h3>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+        <span className="text-muted-foreground">Engine</span>
+        <span className="font-medium">{vehicle.engine}</span>
+        <span className="text-muted-foreground">Engine Power</span>
+        <span className="font-medium">{vehicle.engine_power}</span>
+        <span className="text-muted-foreground">Engine Torque</span>
+        <span className="font-medium">{vehicle.engine_torque}</span>
+        <span className="text-muted-foreground">Transmission</span>
+        <span className="font-medium">{vehicle.transmission}</span>
+      </div>
     </div>
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Transmission</span>
-      <span className="font-medium">{vehicle.transmission}</span>
-    </div>
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Minimum Hire Period</span>
-      <span className="font-medium">{vehicle.min_days} days</span>
-    </div>
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Mileage</span>
-      <span className="font-medium">{vehicle.mileage}</span>
-    </div>
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Fuel Type</span>
-      <span className="font-medium">{vehicle.fuelType}</span>
-    </div>
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Engine</span>
-      <span className="font-medium">{vehicle.engine}</span>
-    </div>
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Engine Power</span>
-      <span className="font-medium">{vehicle.engine_power}</span>
-    </div>
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Engine Torque</span>
-      <span className="font-medium">{vehicle.engine_torque}</span>
-    </div>
-    <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-      <span className="text-muted-foreground">Fuel Economy</span>
-      <span className="font-medium">
-        City: {vehicle.fuelEconomy.city} | Highway: {vehicle.fuelEconomy.highway}
-      </span>
-    </div>
-    {vehicle.features.length > 0 && (
-      <div className="grid grid-cols-2 even:bg-muted/5 odd:bg-muted px-4 py-2">
-        <span className="text-muted-foreground">Features</span>
-        <ul className="list-none list-inside text-sm text-muted-foreground">
-          {vehicle.features.map((feature, i) => (
-            <li key={i} className="text-foreground flex items-center gap-1"><span><CircleCheckBig className="w-3 h-3" /></span>{feature}</li>
 
+    <div>
+      <h3 className="text-lg font-semibold border-b border-muted pb-2 mb-3">Efficiency & Capacity</h3>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+        <span className="text-muted-foreground">Fuel Type</span>
+        <span className="font-medium">{vehicle.fuelType}</span>
+        <span className="text-muted-foreground">Fuel Economy</span>
+        <span className="font-medium">
+          City: {vehicle.fuelEconomy.city} | Highway: {vehicle.fuelEconomy.highway}
+        </span>
+        <span className="text-muted-foreground">Mileage</span>
+        <span className="font-medium">{vehicle.mileage}</span>
+        <span className="text-muted-foreground">Seats</span>
+        <span className="font-medium">{vehicle.seats} seater</span>
+      </div>
+    </div>
+
+    {vehicle.features.length > 0 && (
+      <div>
+        <h3 className="text-lg font-semibold border-b border-muted pb-2 mb-3">Features</h3>
+        <ul className="columns-2 text-sm text-muted-foreground list-inside">
+          {vehicle.features.map((feature, i) => (
+            <li key={i} className="flex items-center gap-2 mb-1">
+               <CircleCheckBig className="w-4 h-4 text-green-500" />
+              <span>{feature}</span>
+            </li>
           ))}
         </ul>
       </div>
     )}
   </div>
 </div>
+
 
 
               <div className="flex items-baseline mb-8">

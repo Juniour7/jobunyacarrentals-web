@@ -12,12 +12,13 @@ interface SidebarNavProps {
 
 const SidebarNav = ({ activeView, setActiveView }: SidebarNavProps) => (
   <Sidebar className="border-r">
-    <div className="p-6 border-b">
-      <Link to="/" className="flex items-center gap-2">
-        <div className="w-10 h-10 bg-foreground rounded-full flex items-center justify-center">
-          <Car className="w-6 h-6 text-background" />
-        </div>
-        <span className="font-heading text-lg font-semibold">Jobunya Cars</span>
+    <div className="py-2 border-b">
+      <Link to="/" className="flex justify-center items-center gap-2">
+        <img 
+              src="/jobunya.png" 
+              alt="" 
+              className="w-[5rem]"
+            />
       </Link>
     </div>
 
