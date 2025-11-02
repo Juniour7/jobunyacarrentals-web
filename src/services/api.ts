@@ -102,11 +102,13 @@ export const vehiclesAPI = {
 
 export const bookingsAPI = {
   create: (data: { vehicle: number; start_date: string; end_date: string }) =>
-    api.post('/bookings/', data),
+    api.post('/bookings/', data), 
   getMyBookings: () => api.get('/my-bookings/'),
   getAllBookings: () => api.get('/all-bookings/'),
   updateStatus: (id: number, status: string) => 
     api.patch(`/bookings/${id}/status/`, { status }),
+  delete: (id:number) => 
+    api.delete(`/bookings/${id}/delete/`),
 };
 
 export const userAPI = {
