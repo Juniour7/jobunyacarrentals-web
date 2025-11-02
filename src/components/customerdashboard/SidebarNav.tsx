@@ -3,7 +3,7 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel,
   SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton
 } from "@/components/ui/sidebar";
-import { Car, Calendar, FileWarning, Home, User, MessageCircle } from "lucide-react";
+import { Car, Calendar, FileWarning, Home, User } from "lucide-react";
 
 interface SidebarNavProps {
   activeView: string;
@@ -47,14 +47,6 @@ const SidebarNav = ({ activeView, setActiveView }: SidebarNavProps) => (
                   <Home className="w-4 h-4" />
                   <span>Back to Home</span>
                 </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <a href="https://wa.me/254700000000" target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp Support</span>
-                </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
