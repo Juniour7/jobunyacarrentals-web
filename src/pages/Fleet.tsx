@@ -15,9 +15,19 @@ import { Search } from "lucide-react";
 import { vehiclesAPI } from "@/services/api";
 import { toast } from "sonner";
 import { Vehicle } from "@/types/vehicle";
+import { useLocation } from "react-router-dom";
 
 const Fleet = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  // Pre-fill filters from query params
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    queryParams.get("car_type") || "ALL"
+  );
+  const [startDate, setStartDate] = useState(queryParams.get("start_date") || "");
+  const [endDate, setEndDate] = useState(queryParams.get("end_date") || "");
+
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,10 +36,13 @@ const Fleet = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
+  // Fetch vehicles
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const params: any = { page_size: 1000 }; // ✅ fetch all vehicles
+        const params: any = { page_size: 1000 }; // fetch all vehicles
+
+        // Apply filters
         if (searchTerm) params.search = searchTerm;
         if (selectedCategory !== "ALL") params.car_type = selectedCategory;
         if (transmissionFilter !== "ALL") params.transmission = transmissionFilter;
@@ -37,7 +50,12 @@ const Fleet = () => {
         if (minPrice) params.min_price = minPrice;
         if (maxPrice) params.max_price = maxPrice;
 
+        // Optional: send dates if your API supports availability filtering
+        if (startDate) params.start_date = startDate;
+        if (endDate) params.end_date = endDate;
+
         const response = await vehiclesAPI.getAll(params);
+
         const apiVehicles = response.data.results.map((v: any) => ({
           id: v.id.toString(),
           name: v.name,
@@ -54,10 +72,9 @@ const Fleet = () => {
           minimumHirePeriod: "1 day",
           engine: v.model,
           available: v.status === "Available",
-          features: v.features
-            ? v.features.split(",").map((f: string) => f.trim())
-            : [],
+          features: v.features ? v.features.split(",").map((f: string) => f.trim()) : [],
         }));
+
         setVehicles(apiVehicles);
       } catch (error) {
         toast.error("Failed to load vehicles");
@@ -67,7 +84,16 @@ const Fleet = () => {
     };
 
     fetchVehicles();
-  }, [searchTerm, selectedCategory, transmissionFilter, fuelTypeFilter, minPrice, maxPrice]);
+  }, [
+    searchTerm,
+    selectedCategory,
+    transmissionFilter,
+    fuelTypeFilter,
+    minPrice,
+    maxPrice,
+    startDate,
+    endDate,
+  ]);
 
   // Group vehicles by category
   const groupedVehicles = vehicles.reduce((acc: Record<string, Vehicle[]>, v) => {
@@ -76,7 +102,6 @@ const Fleet = () => {
     return acc;
   }, {});
 
-  // Define consistent order for display
   const categoryOrder = [
     "Small Car",
     "Medium Car",

@@ -30,7 +30,7 @@ const Index = () => {
     vehicleType: "",
   });
 
-  // 🔹 Define your featured vehicles by slug (from your backend Vehicle.slug)
+  // Featured vehicle slugs
   const FEATURED_SLUGS = [
     "mercedes-benz-gle",
     "toyota-land-cruiser-v8-lc200-diesel",
@@ -44,7 +44,6 @@ const Index = () => {
     const fetchVehicles = async () => {
       try {
         const response = await vehiclesAPI.getAll();
-
         const apiVehicles = response.data.results.map((v: any) => ({
           id: v.id.toString(),
           name: v.name,
@@ -68,7 +67,6 @@ const Index = () => {
           features: v.features ? v.features.split(",").map((f: string) => f.trim()) : [],
         }));
 
-        // Filter and maintain order
         const featured = FEATURED_SLUGS
           .map((slug) => apiVehicles.find((v: any) => v.slug === slug))
           .filter(Boolean);
@@ -84,9 +82,12 @@ const Index = () => {
     fetchVehicles();
   }, []);
 
+  // Navigate to fleet page with filters
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (searchData.vehicleType) params.append("car_type", searchData.vehicleType);
+    if (searchData.startDate) params.append("start_date", searchData.startDate);
+    if (searchData.endDate) params.append("end_date", searchData.endDate);
     navigate(`/fleet?${params.toString()}`);
   };
 
@@ -94,7 +95,7 @@ const Index = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      {/* Hero Section with Search */}
+      {/* Hero Section */}
       <section className="relative min-h-[90vh] flex flex-col justify-center items-center overflow-hidden">
         {/* Background Video */}
         <div className="absolute inset-0 z-0">
@@ -145,6 +146,7 @@ const Index = () => {
             <Card className="max-w-4xl mx-auto shadow-2xl bg-white/95 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="grid md:grid-cols-3 gap-4">
+                  {/* Pick-up Date */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-accent" />
@@ -158,6 +160,8 @@ const Index = () => {
                       className="w-full"
                     />
                   </div>
+
+                  {/* Drop-off Date */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-accent" />
@@ -171,6 +175,8 @@ const Index = () => {
                       className="w-full"
                     />
                   </div>
+
+                  {/* Vehicle Type */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-2">
                       <Car className="w-4 h-4 text-accent" />
@@ -184,7 +190,7 @@ const Index = () => {
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Sedan">Sedan</SelectItem>
+                        <SelectItem value="Small Car">Small Car</SelectItem>
                         <SelectItem value="SUV">SUV</SelectItem>
                         <SelectItem value="Luxury">Luxury</SelectItem>
                         <SelectItem value="Sports">Sports</SelectItem>
@@ -192,6 +198,7 @@ const Index = () => {
                     </Select>
                   </div>
                 </div>
+
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button 
                     variant="accent" 
