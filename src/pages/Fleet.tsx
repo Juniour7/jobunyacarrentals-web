@@ -280,7 +280,7 @@ const Fleet = () => {
             {/* Price Range */}
             <div className="mt-6">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Price Range (Ksh. {priceRange[0]} – Ksh. {priceRange[1]})
+                Daily Rate Range (Ksh. {priceRange[0]} – Ksh. {priceRange[1]})
               </label>
               <Slider
                 value={priceRange}
