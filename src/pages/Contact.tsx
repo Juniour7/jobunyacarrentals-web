@@ -7,158 +7,202 @@ import { Label } from "@/components/ui/label";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    message: ""
+    message: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Message sent! We'll get back to you soon.");
+    toast.success("✅ Message sent! We'll get back to you soon.");
     setFormData({ name: "", email: "", phone: "", message: "" });
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100">
       <Navbar />
-      
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="font-heading text-5xl sm:text-6xl font-bold mb-4">
+
+      <section className="pt-32 pb-20 ">
+        <div className="container mx-auto md:max-w-6xl">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h1 className="font-heading text-5xl sm:text-6xl font-bold mb-4 bg-gradient-to-r from-accent to-[#09d3ef] bg-clip-text text-transparent">
               Get in Touch
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Have questions about our services? We'd love to hear from you. 
-              Send us a message and we'll respond as soon as possible.
+              Have questions about our services or want a custom quote? We’d love
+              to hear from you — drop us a message and our friendly team will
+              respond promptly.
             </p>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Contact Form */}
-            <div className="bg-card p-8 rounded-lg shadow-lg">
-              <h2 className="font-heading text-2xl font-semibold mb-6">Send us a Message</h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    required
-                    className="mt-2"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    required
-                    className="mt-2"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+254 700 000 000"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    required
-                    className="mt-2"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Tell us about your rental needs..."
-                    value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
-                    required
-                    className="mt-2 min-h-[120px]"
-                  />
-                </div>
-                
-                <Button type="submit" variant="accent" className="w-full" size="lg">
-                  Send Message
-                </Button>
-              </form>
-            </div>
-            
-            {/* Contact Information */}
-            <div className="space-y-8">
-              <div>
-                <h2 className="font-heading text-2xl font-semibold mb-6">Contact Information</h2>
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-6 h-6 text-accent" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">Address</h3>
-                      <p className="text-muted-foreground">
-                        Westlands, Nairobi<br />
-                        Kenya
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-6 h-6 text-accent" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">Phone</h3>
-                      <p className="text-muted-foreground">
-                        <a href="tel:+254 723 565 952 " className="hover:text-[#07b6d5] transition-colors duration-300 ease-in-out">+254 723 565 952</a>
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-6 h-6 text-accent" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">Email</h3>
-                      <p className="text-muted-foreground">
-                        <a href="mailto:info@joobunyacarrentals.co.ke" className="hover:text-[#07b6d5] transition-colors duration-300 ease-in-out">info@jobunyacarrentals.co.ke</a><br />
-                        <a href="mailto:bookings@jobunyacarrentals.co.ke" className="hover:text-[#07b6d5] transition-colors duration-300 ease-in-out">bookings@jobunyacarrentals.co.ke</a>
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-6 h-6 text-accent" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">Business Hours</h3>
-                      <p className="text-muted-foreground">
-                        Monday - Friday: 8:00 AM - 6:00 PM<br />
-                        Saturday: 9:00 AM - 4:00 PM<br />
-                        Sunday: Closed
-                      </p>
-                    </div>
-                  </div>
-                </div>
+          </motion.div>
+
+          {/* 🟢 Contact Information Cards at the Top */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"
+          >
+            {/* Address */}
+            <div className="group bg-white/80 backdrop-blur-md border border-gray-100 p-3 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="flex items-center justify-center w-14 h-14 bg-accent/10 rounded-full mb-4 group-hover:bg-accent/20 mx-auto">
+                <MapPin className="w-7 h-7 text-accent" />
               </div>
+              <h3 className="font-semibold text-lg text-center mb-1">Address</h3>
+              <p className="text-muted-foreground text-center text-sm">
+                Kahawa Wendani, Nairobi
+                <br />
+                Kenya
+              </p>
             </div>
-          </div>
+
+            {/* Phone */}
+            <div className="group bg-white/80 backdrop-blur-md border border-gray-100 p-3 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="flex items-center justify-center w-14 h-14 bg-accent/10 rounded-full mb-4 group-hover:bg-accent/20 mx-auto">
+                <Phone className="w-7 h-7 text-accent" />
+              </div>
+              <h3 className="font-semibold text-lg text-center mb-1">Call</h3>
+              <p className="text-muted-foreground text-center">
+                <a
+                  href="tel:+254723565952"
+                  className="hover:text-accent transition-colors text-sm"
+                >
+                  +254 723 565 952
+                </a>
+              </p>
+            </div>
+
+            {/* Email */}
+            <div className="group bg-white/80 backdrop-blur-md border border-gray-100 p-3 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="flex items-center justify-center w-14 h-14 bg-accent/10 rounded-full mb-4 group-hover:bg-accent/20 mx-auto">
+                <Mail className="w-7 h-7 text-accent" />
+              </div>
+              <h3 className="font-semibold text-lg text-center mb-1">Email</h3>
+              <span className="text-muted-foreground flex flex-wrap text-sm  text-center space-y-1">
+                <a
+                  href="mailto:info@jobunyacarrentals.co.ke"
+                  className="hover:text-accent text-center"
+                >
+                  info@jobunyacarrentals.co.ke
+                </a>
+                <a
+                  href="mailto:bookings@jobunyacarrentals.co.ke"
+                  className="hover:text-accent text-center"
+                >
+                  bookings@jobunyacarrentals.co.ke
+                </a>
+              </span>
+            </div>
+
+            {/* Hours */}
+            <div className="group bg-white/80 backdrop-blur-md border border-gray-100 p-3 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="flex items-center justify-center w-14 h-14 bg-accent/10 rounded-full mb-4 group-hover:bg-accent/20 mx-auto">
+                <Clock className="w-7 h-7 text-accent" />
+              </div>
+              <h3 className="font-semibold text-lg text-center mb-1">
+                Business Hours
+              </h3>
+              <p className="text-muted-foreground text-center text-sm">
+                Mon–Fri: 8:00 AM – 6:00 PM
+                <br />
+                Sun: 9:00 AM – 4:00 PM
+                <br />
+                Sat: Closed
+              </p>
+            </div>
+          </motion.div>
+
+          {/* 📝 Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-gray-100 md:max-w-3xl mx-auto"
+          >
+            <h2 className="font-heading text-2xl font-semibold mb-6 text-gray-800 text-center">
+              Send us a Message
+            </h2>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  required
+                  className="mt-2 focus-visible:ring-accent"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  required
+                  className="mt-2 focus-visible:ring-accent"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+254 700 000 000"
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                  required
+                  className="mt-2 focus-visible:ring-accent"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="message">Message</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Tell us about your rental needs..."
+                  value={formData.message}
+                  onChange={(e) =>
+                    setFormData({ ...formData, message: e.target.value })
+                  }
+                  required
+                  className="mt-2 min-h-[140px] focus-visible:ring-accent"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                variant="accent"
+                className="w-full mt-4 text-lg font-semibold py-6"
+              >
+                Send Message
+              </Button>
+            </form>
+          </motion.div>
         </div>
       </section>
 
