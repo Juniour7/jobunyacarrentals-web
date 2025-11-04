@@ -1,4 +1,4 @@
-name: Deploy Vite App to cPanel via SFTP
+name: Deploy Vite App to cPanel via SFTP (Optimized)
 
 on:
   push:
@@ -10,21 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'  # Enable dependency caching
 
+      # 3️⃣ Install dependencies (faster thanks to cache)
       - name: Install dependencies
         run: npm ci
 
+      # 4️⃣ Build the Vite app
       - name: Build Vite app
         run: npm run build
 
-      - name: Deploy via SFTP
+      # 5️⃣ Upload build artifacts (optional: for debugging or rollbacks)
+      - name: Upload dist folder as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vite-dist
+          path: ./dist
+
+      # 6️⃣ Deploy via SFTP
+      - name: Deploy via SFTP to cPanel
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ${{ secrets.SFTP_HOST }}
@@ -34,3 +47,9 @@ jobs:
           local_path: ./dist/*
           remote_path: /home/qkvhljbh/public_html/
           sftp_only: true
+          delete_remote_files: true  # Cleans old files safely
+          exclude: |
+            **/.git*
+            **/.github*
+            node_modules/
+            **/node_modules/*
