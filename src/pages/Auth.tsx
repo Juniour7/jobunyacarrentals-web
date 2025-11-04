@@ -250,7 +250,7 @@ const Auth = () => {
                     />
                   </div>
 
-                  <div>
+                  {/* <div>
                     <Label htmlFor="signup-licence">Driver’s License Number</Label>
                     <Input
                       id="signup-licence"
@@ -260,7 +260,7 @@ const Auth = () => {
                       onChange={(e) => setSignupData({ ...signupData, licence: e.target.value })}
                       className="mt-2"
                     />
-                  </div>
+                  </div> */}
 
                   <div>
                     <Label htmlFor="signup-password">Password</Label>
