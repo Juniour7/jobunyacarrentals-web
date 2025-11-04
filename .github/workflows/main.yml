@@ -1,38 +1,36 @@
-name: Deploy Vite App to cPanel
+name: Deploy Vite App to cPanel via SFTP
 
 on:
   push:
-    branches:
-      - main # Trigger deployment on push to main
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    env:
-      VITE_WEB3FORMS_API_KEY: ${{ secrets.VITE_WEB3FORMS_API_KEY }}
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Match your local dev environment
+          node-version: '22'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Vite project
+      - name: Build Vite app
         run: npm run build
 
-      - name: Deploy to cPanel via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Deploy via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: public_html/ # Adjust if your site is in a subfolder
-          dangerous-clean-slate: true
+          server: ${{ secrets.SFTP_HOST }}
+          port: ${{ secrets.SFTP_PORT }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          local_path: ./dist/*
+          remote_path: /home/qkvhljbh/public_html/
+          sftp_only: true
