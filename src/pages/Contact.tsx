@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Facebook } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -121,6 +121,26 @@ const Contact = () => {
                 Sat: Closed
               </p>
             </div>
+          </motion.div>
+
+          {/* Social Media Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="mt-8 text-center"
+          >
+            <h3 className="font-heading text-xl font-semibold mb-4">Follow Us</h3>
+            <a
+              href="https://facebook.com/jobunyacarrentals"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md border border-gray-100 px-6 py-3 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-accent/10"
+            >
+              <Facebook className="w-5 h-5 text-accent" />
+              <span className="font-medium">Facebook</span>
+            </a>
           </motion.div>
 
           {/* 📝 Contact Form */}
