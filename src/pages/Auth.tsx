@@ -258,7 +258,7 @@ const Auth = () => {
                       placeholder="DL123456"
                       value={signupData.licence}
                       onChange={(e) => setSignupData({ ...signupData, licence: e.target.value })}
-                      className="mt-2"
+                      className="mt-2" 
                     />
                   </div> */}
 
