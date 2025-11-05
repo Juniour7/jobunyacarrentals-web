@@ -66,7 +66,6 @@ const AdminUsersSection = () => {
                 <TableHead>Full Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone Number</TableHead>
-                <TableHead>License Number</TableHead>
                 <TableHead>Member Since</TableHead>
               </TableRow>
             </TableHeader>
@@ -77,7 +76,6 @@ const AdminUsersSection = () => {
                   <TableCell>{customer.full_name}</TableCell>
                   <TableCell>{customer.email}</TableCell>
                   <TableCell>{customer.phone_number}</TableCell>
-                  <TableCell>{customer.license_number}</TableCell>
                   <TableCell>{new Date(customer.created_at).toLocaleDateString()}</TableCell>
                 </TableRow>
               ))}

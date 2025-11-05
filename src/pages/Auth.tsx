@@ -5,20 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Car, Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { authAPI } from "@/services/api";
 
 const Auth = () => {
   const navigate = useNavigate();
 
-  // Login form state
+  // Login state
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loginLoading, setLoginLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Signup form state
+  // Signup state
   const [signupData, setSignupData] = useState({
     name: "",
     email: "",
@@ -26,7 +26,7 @@ const Auth = () => {
     licence: "",
     password: "",
     confirmPassword: "",
-    agree_terms: false, // must agree to terms
+    agree_terms: false,
   });
   const [signupLoading, setSignupLoading] = useState(false);
 
@@ -91,24 +91,24 @@ const Auth = () => {
         license_number: signupData.licence,
         password: signupData.password,
         password2: signupData.confirmPassword,
-        agree_terms: "True"
+        agree_terms: "True",
       });
 
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        toast.success("Registration successful!");
-        navigate("/customer/dashboard");
-      } else {
-        toast.success("Registration successful! Please check your email to verify your account.");
-      }
+      const { token, user } = response.data;
+
+      // Save user session
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      toast.success(`Welcome, ${user.full_name || "User"}!`);
+      navigate("/customer/dashboard");
     } catch (error) {
       console.error("Signup error:", error.response?.data);
       const errors = error.response?.data;
       if (errors) {
-        Object.keys(errors).forEach(key => {
+        Object.keys(errors).forEach((key) => {
           if (Array.isArray(errors[key])) {
-            errors[key].forEach((msg: string) => toast.error(`${key}: ${msg}`));
+            errors[key].forEach((msg) => toast.error(`${key}: ${msg}`));
           } else {
             toast.error(`${key}: ${errors[key]}`);
           }
@@ -122,18 +122,14 @@ const Auth = () => {
   };
 
   // ----------------------------
-  // UI / FORM JSX
+  // UI
   // ----------------------------
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-b from-secondary to-background">
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center space-x-2 mb-8">
-          <img 
-              src="/jobunya.png" 
-              alt="" 
-              className="w-[7rem] md:w-[10rem]"
-            />
+          <img src="/jobunya.png" alt="Jobunya logo" className="w-[7rem] md:w-[10rem]" />
         </Link>
 
         <Tabs defaultValue="login" className="w-full">
@@ -163,31 +159,30 @@ const Auth = () => {
                       className="mt-2"
                     />
                   </div>
-                  <div className="">
+                  <div>
                     <Label htmlFor="login-password">Password</Label>
                     <div className="relative">
                       <Input
-                      id="login-password"
-                      type={showPassword ? "text" : "password"}
-                      value={loginData.password}
-                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                      required
-                      className="mt-2 pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
+                        id="login-password"
+                        type={showPassword ? "text" : "password"}
+                        value={loginData.password}
+                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                        required
+                        className="mt-2 pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
                     </div>
                   </div>
                   <Button type="submit" variant="accent" className="w-full" size="lg" disabled={loginLoading}>
                     {loginLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Logging in...
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in...
                       </>
                     ) : (
                       "Login"
@@ -250,33 +245,21 @@ const Auth = () => {
                     />
                   </div>
 
-                  {/* <div>
-                    <Label htmlFor="signup-licence">Driver’s License Number</Label>
-                    <Input
-                      id="signup-licence"
-                      type="text"
-                      placeholder="DL123456"
-                      value={signupData.licence}
-                      onChange={(e) => setSignupData({ ...signupData, licence: e.target.value })}
-                      className="mt-2" 
-                    />
-                  </div> */}
-
                   <div>
                     <Label htmlFor="signup-password">Password</Label>
                     <div className="relative">
                       <Input
-                      id="signup-password"
-                      type={showPassword ? "text" : "password"}
-                      value={signupData.password}
-                      onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                      required
-                      className="mt-2"
+                        id="signup-password"
+                        type={showPassword ? "text" : "password"}
+                        value={signupData.password}
+                        onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                        required
+                        className="mt-2"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
@@ -287,19 +270,19 @@ const Auth = () => {
                     <Label htmlFor="signup-confirm">Confirm Password</Label>
                     <div className="relative">
                       <Input
-                      id="signup-confirm"
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={signupData.confirmPassword}
-                      onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
-                      required
-                      className="mt-2"
-                    />
-                    <button
+                        id="signup-confirm"
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={signupData.confirmPassword}
+                        onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
+                        required
+                        className="mt-2"
+                      />
+                      <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                       >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                   </div>
@@ -321,8 +304,7 @@ const Auth = () => {
                   <Button type="submit" variant="accent" className="w-full" size="lg" disabled={signupLoading}>
                     {signupLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating account...
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating account...
                       </>
                     ) : (
                       "Create Account"
