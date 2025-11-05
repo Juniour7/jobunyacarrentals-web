@@ -80,7 +80,7 @@ const Footer = () => {
             <div className="mt-6">
               <h4 className="font-heading text-lg font-semibold mb-4">Follow Us</h4>
               <a 
-                href="https://facebook.com/jobunyacarrentals" 
+                href="https://www.facebook.com/p/Jobunya-Car-Rentals-61576418253226/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-2 text-sm text-background/70 hover:text-[#07b6d5] transition-colors duration-300 ease-in-out"

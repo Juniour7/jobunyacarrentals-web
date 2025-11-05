@@ -133,10 +133,10 @@ const Contact = () => {
           >
             <h3 className="font-heading text-xl font-semibold mb-4">Follow Us</h3>
             <a
-              href="https://facebook.com/jobunyacarrentals"
+              href="https://www.facebook.com/p/Jobunya-Car-Rentals-61576418253226/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md border border-gray-100 px-6 py-3 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-accent/10"
+              className="inline-flex items-center gap-2 mb-4 bg-white/80 backdrop-blur-md border border-gray-100 px-6 py-3 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-accent/10"
             >
               <Facebook className="w-5 h-5 text-accent" />
               <span className="font-medium">Facebook</span>
